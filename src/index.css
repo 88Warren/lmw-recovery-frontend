@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/* ─── Brand Tokens ─────────────────────────────────────────────────── */
+:root {
+  --charcoal: #171717;
+  --ivory:    #F4F0EB;
+  --gold:     #C9A15B;
+  --taupe:    #B8AEA0;
+  --stone:    #78736C;
+  --deep:     #0f0f0f;
+
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'Montserrat', system-ui, sans-serif;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--charcoal);
+  color: var(--ivory);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Reusable atoms ────────────────────────────────────────────────── */
+
+/* Tiny spaced caps label — e.g. "OUR SERVICES" */
+.eyebrow {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+/* 1px gold horizontal rule */
+.gold-rule {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  background: var(--gold);
+  margin: 1.25rem 0 1.75rem;
+}
+
+/* ─── Marquee ───────────────────────────────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-inner {
+  display: inline-flex;
+  gap: 2.5rem;
+  animation: marquee 22s linear infinite;
+  white-space: nowrap;
+}
+
+/* ─── Scroll offset for sticky nav ─────────────────────────────────── */
+[id] { scroll-margin-top: 5rem; }
