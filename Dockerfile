@@ -1,42 +1,41 @@
-# ── Build stage ──────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+# Multi-stage build — node builds the app, nginx serves it
+# Multi-arch compatible — builds for linux/amd64 and linux/arm64
+#
+# docker buildx build \
+#   --platform linux/amd64,linux/arm64 \
+#   -t lmwcode/lmw-recovery-frontend:v1.0.0 \
+#   --no-cache --push .
+#
+# Production env vars are read from .env.production at build time by Vite.
+# Make sure .env.production is populated before building.
+
+# ── Stage 1: build ────────────────────────────────────────────
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+# Install dependencies first (better layer caching)
+COPY package.json package-lock.json ./
 RUN npm ci
 
+# Copy source and build
+# Vite picks up .env.production automatically — no --build-arg needed
 COPY . .
-
-# VITE_ vars must be available at build time.
-# Pass them as --build-arg and expose as ARG → ENV.
-ARG VITE_API_URL
-ARG VITE_STRIPE_PUBLISHABLE_KEY
-ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
-
 RUN npm run build
 
-# ── Runtime stage ─────────────────────────────────────────────────────────────
+# ── Stage 2: serve ────────────────────────────────────────────
 FROM nginx:1.27-alpine
 
-# Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
+# Remove default nginx page
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copy our nginx config (injected by Helm ConfigMap at runtime via volumeMount)
-# This COPY provides a fallback for local docker run without Helm.
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-
-# Copy built assets
+# Copy built assets from stage 1
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# nginx needs write access to these dirs when running as non-root
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid
+# SPA-aware nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget -qO- http://localhost/ || exit 1

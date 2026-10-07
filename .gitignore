@@ -34,3 +34,5 @@ backend/lmw.db-wal
 # ── Frontend ─────────────────────────────────────────────────────────────────
 .env
 .env.local
+.env.production
+.env.development
