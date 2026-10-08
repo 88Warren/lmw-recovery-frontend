@@ -11,7 +11,7 @@ env:
   IMAGE_NAME:       lmwcode/lmw-recovery-frontend
   HELM_RELEASE:     lmwrecovery-frontend
   HELM_NAMESPACE:   lmw-recovery
-  HELM_CHART_PATH:  /opt/lmwrecovery/helmcharts/lmw-recovery/frontend
+  HELM_CHART_PATH:  /opt/lmwrecovery/lmwrecovery-helmcharts/frontend
   HELM_IMAGE_KEY:   webserver.image.tag
 
 jobs:
