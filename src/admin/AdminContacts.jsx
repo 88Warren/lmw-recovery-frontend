@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { adminApi } from './adminApi'
-import { styles } from './AdminSlots'
+import { styles } from './adminStyles'
 
 function fmtDate(iso) {
   return new Date(iso).toLocaleString('en-GB', {
@@ -22,7 +22,7 @@ export default function AdminContacts() {
     finally { setLoading(false) }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => { load() }, [load]) // eslint-disable-line react-hooks/set-state-in-effect
 
   return (
     <div>

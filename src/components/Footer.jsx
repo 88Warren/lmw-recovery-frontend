@@ -1,10 +1,3 @@
-const NAV_LINKS = [
-  { label: 'About',      href: '#about' },
-  { label: 'Treatments', href: '#treatments' },
-  { label: 'The Space',  href: '#the-space' },
-  { label: 'Contact',    href: '#contact' },
-]
-
 export default function Footer() {
   return (
     <footer id="contact" style={{ backgroundColor: '#0a0a0a' }}>

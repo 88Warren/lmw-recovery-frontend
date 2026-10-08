@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { api } from '../api'
 
 /* ─── Constants ─────────────────────────────────────────────────────────── */
@@ -137,10 +137,9 @@ const inputStyle = err => ({
 
 /* ─── Week navigation + slot grid ──────────────────────────────────────── */
 
-function WeekNav({ offset, label, onPrev, onNext }) {
-  const [hovL, setHovL] = useState(false)
-  const [hovR, setHovR] = useState(false)
-  const ArrowBtn = ({ dir, disabled, hov, setHov, onClick }) => (
+function NavArrowBtn({ dir, disabled, onClick }) {
+  const [hov, setHov] = useState(false)
+  return (
     <button onClick={onClick} disabled={disabled}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
@@ -154,11 +153,14 @@ function WeekNav({ offset, label, onPrev, onNext }) {
       </svg>
     </button>
   )
+}
+
+function WeekNav({ offset, label, onPrev, onNext }) {
   return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1rem' }}>
-      <ArrowBtn dir="left"  disabled={offset===0} hov={hovL} setHov={setHovL} onClick={onPrev} />
+      <NavArrowBtn dir="left"  disabled={offset===0} onClick={onPrev} />
       <span className="bm-week-label" style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.65rem', fontWeight:500, color:'#F4F0EB', letterSpacing:'0.04em' }}>{label}</span>
-      <ArrowBtn dir="right" disabled={false}      hov={hovR} setHov={setHovR} onClick={onNext} />
+      <NavArrowBtn dir="right" disabled={false}      onClick={onNext} />
     </div>
   )
 }
@@ -264,14 +266,13 @@ function MobileCalendar({ slots, loading, selectedIds = [], onSelect, getBadge, 
   const days = groupAllByDay(slots)
   const [activeDate, setActiveDate] = useState(() => days[0]?.date ?? null)
 
-  // Keep activeDate in sync if slots change
-  useEffect(() => {
-    if (days.length > 0 && !days.find(d => d.date === activeDate)) {
-      setActiveDate(days[0].date)
-    }
-  }, [slots])
-
-  const activeDaySlots = days.find(d => d.date === activeDate)?.slots ?? []
+  // Keep activeDate in sync if slots change — derive the valid date without an effect
+  const validActiveDate = useMemo(() => {
+    if (days.length === 0) return null
+    if (days.find(d => d.date === activeDate)) return activeDate
+    return days[0].date
+  }, [days, activeDate])
+  const activeDaySlots = days.find(d => d.date === validActiveDate)?.slots ?? []
 
   if (loading) return (
     <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.8rem', fontWeight:300, color:'#78736C', textAlign:'center', padding:'2rem 0' }}>
@@ -296,7 +297,7 @@ function MobileCalendar({ slots, loading, selectedIds = [], onSelect, getBadge, 
           const day  = dt.toLocaleDateString('en-GB', { weekday:'short' })
           const num  = dt.getDate()
           const mon  = dt.toLocaleDateString('en-GB', { month:'short' })
-          const sel  = date === activeDate
+          const sel  = date === validActiveDate
           return (
             <button key={date} onClick={() => setActiveDate(date)} style={{
               flexShrink: 0,
@@ -508,35 +509,39 @@ function PairCalendar({ slots, loading, pair, onPair }) {
 
 /* ─── Treatment picker (step 1) ─────────────────────────────────────────── */
 
+function TreatmentItem({ treatment, selected, onSelect }) {
+  const [hov, setHov] = useState(false)
+  const active = selected?.id === treatment.id || hov
+  return (
+    <button key={treatment.id} onClick={() => onSelect(treatment)}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        display:'flex', alignItems:'center', justifyContent:'space-between',
+        padding:'1rem 1.25rem',
+        backgroundColor: active ? '#1c1c1c' : '#171717',
+        border:`1px solid ${selected?.id === treatment.id ? '#C9A15B' : 'rgba(201,161,91,0.15)'}`,
+        cursor:'pointer', textAlign:'left', transition:'all 0.2s',
+      }}
+    >
+      <div>
+        <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.7rem', fontWeight:600, color:'#F4F0EB', letterSpacing:'0.05em', marginBottom:'0.2rem' }}>{treatment.name}</p>
+        <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.62rem', fontWeight:300, color:'#78736C' }}>
+          {treatment.note ?? `${treatment.duration_minutes} min`}
+        </p>
+      </div>
+      <span style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:'1.4rem', fontWeight:500, color:'#C9A15B', lineHeight:1, flexShrink:0, marginLeft:'1rem' }}>
+        {treatment.price}
+      </span>
+    </button>
+  )
+}
+
 function TreatmentPicker({ treatments, selected, onSelect }) {
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
-      {treatments.map(t => {
-        const [hov, setHov] = useState(false)
-        const active = selected?.id === t.id || hov
-        return (
-          <button key={t.id} onClick={() => onSelect(t)}
-            onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-            style={{
-              display:'flex', alignItems:'center', justifyContent:'space-between',
-              padding:'1rem 1.25rem',
-              backgroundColor: active ? '#1c1c1c' : '#171717',
-              border:`1px solid ${selected?.id === t.id ? '#C9A15B' : 'rgba(201,161,91,0.15)'}`,
-              cursor:'pointer', textAlign:'left', transition:'all 0.2s',
-            }}
-          >
-            <div>
-              <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.7rem', fontWeight:600, color:'#F4F0EB', letterSpacing:'0.05em', marginBottom:'0.2rem' }}>{t.name}</p>
-              <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.62rem', fontWeight:300, color:'#78736C' }}>
-                {t.note ?? `${t.duration_minutes} min`}
-              </p>
-            </div>
-            <span style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:'1.4rem', fontWeight:500, color:'#C9A15B', lineHeight:1, flexShrink:0, marginLeft:'1rem' }}>
-              {t.price}
-            </span>
-          </button>
-        )
-      })}
+      {treatments.map(t => (
+        <TreatmentItem key={t.id} treatment={t} selected={selected} onSelect={onSelect} />
+      ))}
     </div>
   )
 }
@@ -546,7 +551,6 @@ function TreatmentPicker({ treatments, selected, onSelect }) {
 export default function BookingModal({ open, onClose, preselected }) {
   // step: 0=DateTime, 1=Treatment, 1.5=SecondSession(maintenance), 2=Details, 3=Confirmed
   const [step, setStep]               = useState(0)
-  const [treatments, setTreatments]   = useState(FALLBACK_TREATMENTS)
   const [selected, setSelected]       = useState(null)    // treatment object
   const [allSlots, setAllSlots]       = useState([])      // slots from API (all durations)
   const [slotsLoading, setSlotsLoading] = useState(false)
@@ -570,6 +574,7 @@ export default function BookingModal({ open, onClose, preselected }) {
   // On step 0 open: fetch all slots (no duration filter) to show all available start times
   useEffect(() => {
     if (step !== 0 || !open) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSlotsLoading(true)
     // Fetch with smallest duration (30 min) to show widest availability on the time picker
     api.getSlots(30)
@@ -581,6 +586,7 @@ export default function BookingModal({ open, onClose, preselected }) {
   // When treatment is selected, fetch slots available for that duration
   useEffect(() => {
     if (!selected || step !== 1) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSlotsForTreatmentLoading(true)
     api.getSlots(selected.duration_minutes)
       .then(data => {
@@ -597,6 +603,7 @@ export default function BookingModal({ open, onClose, preselected }) {
   useEffect(() => {
     if (open && preselected) {
       const matched = FALLBACK_TREATMENTS.find(t => t.name === preselected.name) ?? preselected
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelected(matched)
       setStep(matched.id === 'maintenance-plan' ? 1 : 0)
     }
@@ -801,7 +808,7 @@ export default function BookingModal({ open, onClose, preselected }) {
               <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.7rem', color:'#78736C', padding:'1rem 0' }}>Checking availability…</p>
             ) : (
               <TreatmentPicker
-                treatments={treatments.filter(t => t.id !== 'maintenance-plan')}
+                treatments={FALLBACK_TREATMENTS.filter(t => t.id !== 'maintenance-plan')}
                 selected={selected}
                 onSelect={handleTreatmentSelect}
               />
@@ -811,7 +818,7 @@ export default function BookingModal({ open, onClose, preselected }) {
             <div style={{ marginTop:'1rem', paddingTop:'1rem', borderTop:'1px solid rgba(201,161,91,0.12)' }}>
               <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.52rem', fontWeight:600, letterSpacing:'0.18em', textTransform:'uppercase', color:'#78736C', marginBottom:'0.6rem' }}>Plans</p>
               <TreatmentPicker
-                treatments={treatments.filter(t => t.id === 'maintenance-plan')}
+                treatments={FALLBACK_TREATMENTS.filter(t => t.id === 'maintenance-plan')}
                 selected={selected}
                 onSelect={t => { handleTreatmentSelect(t) }}
               />

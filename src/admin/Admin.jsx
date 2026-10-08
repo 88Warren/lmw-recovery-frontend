@@ -15,7 +15,7 @@ const NAV = [
 ]
 
 export default function Admin() {
-  const { token, login, logout, isAuthed } = useAdminAuth()
+  const { login, logout, isAuthed } = useAdminAuth()
   const [tab, setTab] = useState('slots')
 
   if (!isAuthed) return <AdminLogin onLogin={login} />
