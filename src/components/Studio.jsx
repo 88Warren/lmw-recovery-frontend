@@ -17,15 +17,19 @@ export default function Studio() {
     }}>
       {/* Left — photo */}
       <div style={{ position: 'relative', minHeight: '420px' }}>
-        <img
-          src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=85"
-          alt="The LMW Recovery studio — Llantrisant"
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'center',
-          }}
-        />
+        <picture>
+          <source srcSet="/images/studio.webp" type="image/webp" />
+          <img
+            src="/images/studio.jpg"
+            alt="The LMW Recovery studio — Llantrisant"
+            loading="lazy"
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'center',
+            }}
+          />
+        </picture>
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(to right, rgba(23,23,23,0.3) 0%, rgba(23,23,23,0.05) 60%, rgba(23,23,23,0.5) 100%)',
