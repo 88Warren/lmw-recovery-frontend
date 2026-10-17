@@ -67,6 +67,20 @@ function slotsInMonth(slots, yr, mo) {
   return slots.filter(s => { const d = new Date(s.starts_at); return d.getFullYear()===yr && d.getMonth()===mo })
 }
 
+// free_minutes semantics (from the API):
+//   0            -> start time is already taken
+//   < 60         -> only a limited gap, shorter treatments only
+//   >= cap (120) -> effectively open
+// slotFreeMinutes defensively defaults to a large value if the field is absent
+// (e.g. an older API response), so the slot stays bookable rather than hidden.
+function slotFreeMinutes(s) {
+  return typeof s?.free_minutes === 'number' ? s.free_minutes : 120
+}
+function slotIsTaken(s) {
+  return slotFreeMinutes(s) <= 0
+}
+
+
 /* ─── Shared UI primitives ──────────────────────────────────────────────── */
 
 function StepIndicator({ step }) {
@@ -361,7 +375,7 @@ function MobileCalendar({ slots, loading, selectedIds = [], onSelect, getBadge, 
 
 /* ─── Single-slot calendar (Sports Massage + Recovery Express) ───────────── */
 
-function SingleCalendar({ slots, loading, selectedId, onSelect }) {
+function SingleCalendar({ slots, loading, selectedId, onSelect, getBadge, isDisabled }) {
   const isMobile = useIsMobile()
   const [offset, setOffset] = useState(0)
   const curMon = weekStartOffset(0)
@@ -381,6 +395,8 @@ function SingleCalendar({ slots, loading, selectedId, onSelect }) {
         loading={loading}
         selectedIds={selectedId ? [selectedId] : []}
         onSelect={onSelect}
+        getBadge={getBadge}
+        isDisabled={isDisabled}
       />
     )
   }
@@ -393,7 +409,7 @@ function SingleCalendar({ slots, loading, selectedId, onSelect }) {
         ? <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.72rem', fontWeight:300, color:'#78736C', textAlign:'center', padding:'2rem 0' }}>Loading availability…</p>
         : days.length === 0
           ? <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.72rem', fontWeight:300, color:'#78736C', textAlign:'center', padding:'2rem 0', lineHeight:1.8 }}>No availability this week.<br/>Try the next week or use the picker below.</p>
-          : <SlotGrid days={days} selectedIds={selectedId ? [selectedId] : []} onSelect={onSelect} />
+          : <SlotGrid days={days} selectedIds={selectedId ? [selectedId] : []} onSelect={onSelect} getBadge={getBadge} isDisabled={isDisabled} />
       }
       <WeekJump val={toWeekVal(mon)} minVal={toWeekVal(curMon)} onChange={handleWeekInput} />
     </div>
@@ -444,7 +460,15 @@ function PairCalendar({ slots, loading, pair, onPair }) {
   }
 
   const selIds = [s1?.id, s2?.id].filter(Boolean)
+  // A maintenance session is 60 min, so any slot with less than 60 free minutes
+  // can't hold one. Badge: show the selected-session number first; otherwise
+  // flag taken/limited slots.
+  // Badge only marks which session (1 or 2) a slot is selected for. Unavailable
+  // slots are greyed out via isDisabled rather than labelled.
   const getBadge = s => s1?.id === s.id ? 1 : s2?.id === s.id ? 2 : null
+  // Disabled when the slot can't hold a 60-min session, or (once session 1 is
+  // chosen) when it violates the 14-day gap.
+  const slotDisabled = s => slotFreeMinutes(s) < 60 || (!!s1 && tooClose(s))
 
   return (
     <div>
@@ -489,7 +513,7 @@ function PairCalendar({ slots, loading, pair, onPair }) {
           selectedIds={selIds}
           onSelect={handleClick}
           getBadge={getBadge}
-          isDisabled={s1 ? tooClose : null}
+          isDisabled={slotDisabled}
         />
       ) : (
         <>
@@ -498,7 +522,7 @@ function PairCalendar({ slots, loading, pair, onPair }) {
             ? <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.72rem', fontWeight:300, color:'#78736C', textAlign:'center', padding:'2rem 0' }}>Loading availability…</p>
             : days.length === 0
               ? <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.72rem', fontWeight:300, color:'#78736C', textAlign:'center', padding:'2rem 0', lineHeight:1.8 }}>No availability this week.<br/>Try the next week or picker below.</p>
-              : <SlotGrid days={days} selectedIds={selIds} onSelect={handleClick} getBadge={getBadge} isDisabled={s1 ? tooClose : null} />
+              : <SlotGrid days={days} selectedIds={selIds} onSelect={handleClick} getBadge={getBadge} isDisabled={slotDisabled} />
           }
           <WeekJump val={toWeekVal(mon)} minVal={toWeekVal(curMon)} onChange={handleWeekInput} />
         </>
@@ -509,24 +533,38 @@ function PairCalendar({ slots, loading, pair, onPair }) {
 
 /* ─── Treatment picker (step 1) ─────────────────────────────────────────── */
 
-function TreatmentItem({ treatment, selected, onSelect }) {
+function TreatmentItem({ treatment, selected, onSelect, slotFreeMinutesForFit }) {
   const [hov, setHov] = useState(false)
-  const active = selected?.id === treatment.id || hov
+
+  // Does this treatment fit the currently selected time? The maintenance plan is
+  // handled by a separate pair picker, so it is never gated here. When no time is
+  // selected yet (slotFreeMinutesForFit is null), everything is selectable.
+  const gated = slotFreeMinutesForFit != null && treatment.id !== 'maintenance-plan'
+  const fits  = !gated || treatment.duration_minutes <= slotFreeMinutesForFit
+  const disabled = gated && !fits
+
+  const active = (selected?.id === treatment.id || hov) && !disabled
   return (
-    <button key={treatment.id} onClick={() => onSelect(treatment)}
+    <button key={treatment.id}
+      onClick={() => { if (!disabled) onSelect(treatment) }}
+      disabled={disabled}
+      aria-disabled={disabled}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         display:'flex', alignItems:'center', justifyContent:'space-between',
         padding:'1rem 1.25rem',
         backgroundColor: active ? '#1c1c1c' : '#171717',
         border:`1px solid ${selected?.id === treatment.id ? '#C9A15B' : 'rgba(201,161,91,0.15)'}`,
-        cursor:'pointer', textAlign:'left', transition:'all 0.2s',
+        cursor: disabled ? 'not-allowed' : 'pointer', textAlign:'left', transition:'all 0.2s',
+        opacity: disabled ? 0.45 : 1,
       }}
     >
       <div>
         <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.7rem', fontWeight:600, color:'#F4F0EB', letterSpacing:'0.05em', marginBottom:'0.2rem' }}>{treatment.name}</p>
-        <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.62rem', fontWeight:300, color:'#78736C' }}>
-          {treatment.note ?? `${treatment.duration_minutes} min`}
+        <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.62rem', fontWeight:300, color: disabled ? '#C98A6B' : '#78736C' }}>
+          {disabled
+            ? `Needs ${treatment.duration_minutes} min — only ${slotFreeMinutesForFit} min free at this time`
+            : (treatment.note ?? `${treatment.duration_minutes} min`)}
         </p>
       </div>
       <span style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:'1.4rem', fontWeight:500, color:'#C9A15B', lineHeight:1, flexShrink:0, marginLeft:'1rem' }}>
@@ -536,15 +574,23 @@ function TreatmentItem({ treatment, selected, onSelect }) {
   )
 }
 
-function TreatmentPicker({ treatments, selected, onSelect }) {
+function TreatmentPicker({ treatments, selected, onSelect, slotFreeMinutesForFit }) {
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
       {treatments.map(t => (
-        <TreatmentItem key={t.id} treatment={t} selected={selected} onSelect={onSelect} />
+        <TreatmentItem
+          key={t.id}
+          treatment={t}
+          selected={selected}
+          onSelect={onSelect}
+          slotFreeMinutesForFit={slotFreeMinutesForFit}
+        />
       ))}
     </div>
   )
 }
+
+
 
 /* ─── Main modal ────────────────────────────────────────────────────────── */
 
@@ -571,32 +617,32 @@ export default function BookingModal({ open, onClose, preselected }) {
   const [slotsForTreatment, setSlotsForTreatment] = useState([])
   const [slotsForTreatmentLoading, setSlotsForTreatmentLoading] = useState(false)
 
-  // On step 0 open: fetch all slots (no duration filter) to show all available start times
+  // On step 0 open: fetch EVERY slot in the window (no duration filter) so we can
+  // show taken slots greyed out and flag ones with only partial time left, rather
+  // than silently hiding anything that doesn't fit a particular duration.
   useEffect(() => {
     if (step !== 0 || !open) return
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSlotsLoading(true)
-    // Fetch with smallest duration (30 min) to show widest availability on the time picker
-    api.getSlots(30)
+    api.getSlots()
       .then(setAllSlots)
       .catch(() => setAllSlots([]))
       .finally(() => setSlotsLoading(false))
   }, [step, open])
 
-  // When treatment is selected, fetch slots available for that duration
+  // On step 1, fetch EVERY slot in the window (with free_minutes) so the pair
+  // calendar can grey out taken slots. We no longer filter by duration here and
+  // no longer silently clear the user's selected time — if the chosen time does
+  // not fit a treatment, the treatment picker explains why instead.
   useEffect(() => {
-    if (!selected || step !== 1) return
+    if (step !== 1) return
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSlotsForTreatmentLoading(true)
-    api.getSlots(selected.duration_minutes)
-      .then(data => {
-        setSlotsForTreatment(data)
-        // If selectedSlot is no longer available for this treatment, clear it
-        setSelectedSlot(s => data.find(d => d.id === s?.id) ? s : null)
-      })
+    api.getSlots()
+      .then(setSlotsForTreatment)
       .catch(() => setSlotsForTreatment([]))
       .finally(() => setSlotsForTreatmentLoading(false))
-  }, [selected, step])
+  }, [step])
 
   // Preselect from treatment card click — pre-set the treatment but start at step 0 (date/time)
   // Exception: Maintenance Plan skips straight to the pair picker (step 1)
@@ -630,11 +676,14 @@ export default function BookingModal({ open, onClose, preselected }) {
 
   const handleClose = useCallback(() => { reset(); onClose() }, [reset, onClose])
 
-  // On step 0: pick time. If treatment already selected (from card click), go straight to details.
-  // Maintenance Plan is never preselected into step 0, so no special case needed here.
+  // On step 0: pick time. If a treatment is already selected (from a card click)
+  // AND it fits the chosen time, skip straight to details. Otherwise go to the
+  // treatment step so the user can see why it doesn't fit and pick one that does.
   function handleTimeSelect(slot) {
     setSelectedSlot(slot)
-    if (selected && selected.id !== 'maintenance-plan') {
+    const fits = selected && selected.id !== 'maintenance-plan'
+      && selected.duration_minutes <= slotFreeMinutes(slot)
+    if (fits) {
       setStep(2)
     } else {
       setStep(1)
@@ -647,10 +696,24 @@ export default function BookingModal({ open, onClose, preselected }) {
     // slot availability for this treatment is fetched via useEffect above
   }
 
+  // Free minutes at the selected time, used to gate which treatments fit.
+  // Prefer the freshest value from the step-1 fetch (slotsForTreatment); fall
+  // back to the value captured on the slot object itself.
+  const selectedFreeMinutes = useMemo(() => {
+    if (!selectedSlot) return null
+    const fresh = slotsForTreatment.find(s => s.id === selectedSlot.id)
+    return slotFreeMinutes(fresh ?? selectedSlot)
+  }, [selectedSlot, slotsForTreatment])
+
+  // Does the chosen treatment actually fit the selected time?
+  const treatmentFitsSlot = !selected || selected.id === 'maintenance-plan'
+    || selectedFreeMinutes == null
+    || selected.duration_minutes <= selectedFreeMinutes
+
   // Can continue from step 1?
   const canContinueFromTreatment = isMaintenance
     ? pair[0] !== null && pair[1] !== null
-    : selectedSlot !== null
+    : selectedSlot !== null && !!selected && treatmentFitsSlot
 
   function validateDetails() {
     const e = {}
@@ -770,6 +833,7 @@ export default function BookingModal({ open, onClose, preselected }) {
               loading={slotsLoading}
               selectedId={selectedSlot?.id ?? null}
               onSelect={handleTimeSelect}
+              isDisabled={slotIsTaken}
             />
           </div>
         )}
@@ -791,13 +855,14 @@ export default function BookingModal({ open, onClose, preselected }) {
               Choose your treatment. Only sessions that fit your selected time are shown.
             </p>
 
-            {slotsForTreatmentLoading && selected ? (
+            {slotsForTreatmentLoading ? (
               <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.7rem', color:'#78736C', padding:'1rem 0' }}>Checking availability…</p>
             ) : (
               <TreatmentPicker
                 treatments={FALLBACK_TREATMENTS.filter(t => t.id !== 'maintenance-plan')}
                 selected={selected}
                 onSelect={handleTreatmentSelect}
+                slotFreeMinutesForFit={selectedFreeMinutes}
               />
             )}
 
@@ -808,6 +873,7 @@ export default function BookingModal({ open, onClose, preselected }) {
                 treatments={FALLBACK_TREATMENTS.filter(t => t.id === 'maintenance-plan')}
                 selected={selected}
                 onSelect={t => { handleTreatmentSelect(t) }}
+                slotFreeMinutesForFit={selectedFreeMinutes}
               />
             </div>
 
@@ -817,7 +883,7 @@ export default function BookingModal({ open, onClose, preselected }) {
               {selected?.id === 'maintenance-plan' ? (
                 <GoldBtn onClick={() => {}} disabled fullWidth>Select 2 Sessions Below</GoldBtn>
               ) : (
-                <GoldBtn onClick={() => setStep(2)} disabled={!selected || !selectedSlot} fullWidth>Continue</GoldBtn>
+                <GoldBtn onClick={() => setStep(2)} disabled={!canContinueFromTreatment} fullWidth>Continue</GoldBtn>
               )}
             </div>
           </div>

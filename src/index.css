@@ -111,11 +111,11 @@
     .services-grid { grid-template-columns: 1fr !important; }
   }
 
-  /* Treatments — 3-up grid steps to 2-up on tablet, 1-up on phone */
+  /* Treatments — 3-up grid steps to 2-up on tablet, 1-up (stacked) on phone */
   @media (max-width: 900px) {
     .treatments-grid { grid-template-columns: repeat(2, 1fr) !important; }
   }
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     .treatments-grid { grid-template-columns: 1fr !important; }
   }
 

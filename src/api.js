@@ -20,7 +20,12 @@ export const api = {
   /** GET /api/treatments */
   getTreatments: () => request('GET', '/api/treatments'),
 
-  /** GET /api/slots?duration=60 — returns available start times for a given treatment duration */
+  /**
+   * GET /api/slots — returns start times in the window, each with free_minutes
+   * (minutes free before the next booking). Pass durationMins to only return
+   * slots with at least that much free time; omit it to get every slot
+   * (including taken/partial ones) so the UI can grey them out.
+   */
   getSlots: (durationMins, date) => {
     const params = new URLSearchParams()
     if (durationMins) params.set('duration', String(durationMins))
