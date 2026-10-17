@@ -112,11 +112,6 @@ export default function Services() {
         </div>
       </div>
 
-      {/* Responsive: stack to 2-col on tablet, 1-col on mobile */}
-      <style>{`
-        @media (max-width: 900px) { .services-grid { grid-template-columns: repeat(2, 1fr) !important; } }
-        @media (max-width: 480px) { .services-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
     </section>
   )
 }

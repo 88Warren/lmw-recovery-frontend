@@ -15,14 +15,6 @@ export default function Studio() {
       minHeight: '620px',
       backgroundColor: '#0f0f0f',
     }}>
-      <style>{`
-        @media (max-width: 768px) {
-          .studio-grid { grid-template-columns: 1fr !important; }
-          .studio-grid > *:first-child { order: 2; min-height: 320px; }
-          .studio-grid > *:last-child  { order: 1; }
-        }
-      `}</style>
-
       {/* Left — photo */}
       <div style={{ position: 'relative', minHeight: '420px' }}>
         <img

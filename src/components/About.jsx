@@ -5,12 +5,6 @@ export default function About() {
       gridTemplateColumns: '1fr 1fr',
       minHeight: '680px',
     }}>
-      <style>{`
-        @media (max-width: 768px) {
-          .about-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
-
       {/* Left: ivory text panel */}
       <div style={{
         backgroundColor: '#F4F0EB',

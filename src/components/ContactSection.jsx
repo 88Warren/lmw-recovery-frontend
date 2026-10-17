@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { api } from '../api'
-import { getRecaptchaToken } from '../recaptcha'
 
 export default function ContactSection() {
   const [form, setForm]       = useState({ name: '', email: '', phone: '', message: '' })
@@ -24,13 +23,11 @@ export default function ContactSection() {
     if (Object.keys(errs).length) { setErrors(errs); return }
     setSubmitting(true); setApiError('')
     try {
-      const recaptchaToken = await getRecaptchaToken('contact')
       await api.sendContact({
-        name:            form.name.trim(),
-        email:           form.email.trim(),
-        phone:           form.phone.trim(),
-        message:         form.message.trim(),
-        recaptcha_token: recaptchaToken,
+        name:    form.name.trim(),
+        email:   form.email.trim(),
+        phone:   form.phone.trim(),
+        message: form.message.trim(),
       })
       setSent(true)
     } catch (err) {
@@ -50,10 +47,6 @@ export default function ContactSection() {
           gap: '5rem',
           alignItems: 'stretch',
         }} className="contact-grid">
-          <style>{`
-            @media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr !important; gap: 3rem !important; } }
-          `}</style>
-
           {/* ── Left: heading + info ── */}
           <div>
             <span className="eyebrow">Get in Touch</span>

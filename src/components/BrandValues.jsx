@@ -24,7 +24,6 @@ const VALUES = [
 export default function BrandValues() {
   return (
     <section style={{ backgroundColor: '#0f0f0f', padding: '6rem 0' }} className="brand-values-section">
-      <style>{`@media (max-width: 768px) { .brand-values-section { display: none !important; } }`}</style>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2.5rem' }}>
         <div style={{
           display: 'grid',
@@ -69,11 +68,6 @@ export default function BrandValues() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 900px) { .values-grid { grid-template-columns: repeat(2, 1fr) !important; } }
-        @media (max-width: 480px) { .values-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
     </section>
   )
 }

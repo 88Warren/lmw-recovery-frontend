@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 /* ─── Brand Tokens ─────────────────────────────────────────────────── */
+/* Custom properties are layer-neutral — safe to declare at the top level. */
 :root {
   --charcoal: #171717;
   --ivory:    #F4F0EB;
@@ -13,53 +14,133 @@
   --sans:  'Montserrat', system-ui, sans-serif;
 }
 
-/* ─── Reset ─────────────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/*
+ * Everything below is assigned to a Tailwind cascade layer so that utility
+ * classes (which live in the `utilities` layer) reliably win over our own
+ * element/reset and reusable component styles. The declared layer order is:
+ *   theme < base < components < utilities
+ * so `base` resets and `components` atoms are both overridable by utilities
+ * such as `md:flex`, `hidden`, etc.
+ */
 
-html { scroll-behavior: smooth; }
+/* ─── Reset & element defaults → base layer ────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  font-family: var(--sans);
-  background: var(--charcoal);
-  color: var(--ivory);
-  -webkit-font-smoothing: antialiased;
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--charcoal);
+    color: var(--ivory);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Scroll offset so sticky-nav anchors don't hide section headings. */
+  [id] { scroll-margin-top: 5rem; }
 }
 
-/* ─── Reusable atoms ────────────────────────────────────────────────── */
+/* ─── Reusable atoms → components layer ─────────────────────────────── */
+@layer components {
+  /* Tiny spaced caps label — e.g. "OUR SERVICES" */
+  .eyebrow {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
 
-/* Tiny spaced caps label — e.g. "OUR SERVICES" */
-.eyebrow {
-  display: block;
-  font-family: var(--sans);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 1rem;
+  /* 1px gold horizontal rule */
+  .gold-rule {
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    background: var(--gold);
+    margin: 1.25rem 0 1.75rem;
+  }
+
+  .marquee-inner {
+    display: inline-flex;
+    gap: 2.5rem;
+    animation: marquee 22s linear infinite;
+    white-space: nowrap;
+  }
+
+  /* ── Responsive section layouts ──────────────────────────────────
+     These override inline grid definitions on their sections, so the
+     `!important` is required to win against the element `style` attribute. */
+
+  /* About — two columns collapse to one on tablet/mobile */
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Studio — collapse to one column and reverse order (photo under text) */
+  @media (max-width: 768px) {
+    .studio-grid { grid-template-columns: 1fr !important; }
+    .studio-grid > *:first-child { order: 2; min-height: 320px; }
+    .studio-grid > *:last-child  { order: 1; }
+  }
+
+  /* Contact — two columns collapse to one, tighter gap */
+  @media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
+  }
+
+  /* Brand values — hide the decorative 4-up strip on mobile; otherwise
+     step down the column count on tablet and phone */
+  @media (max-width: 768px) {
+    .brand-values-section { display: none !important; }
+  }
+  @media (max-width: 900px) {
+    .values-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 480px) {
+    .values-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Services — 5-up grid steps to 2-up on tablet, 1-up on phone */
+  @media (max-width: 900px) {
+    .services-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 480px) {
+    .services-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Treatments — 3-up grid steps to 2-up on tablet, 1-up on phone */
+  @media (max-width: 900px) {
+    .treatments-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 480px) {
+    .treatments-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Testimonials — show a single card on phone */
+  @media (max-width: 640px) {
+    .testimonial-grid { grid-template-columns: 1fr !important; }
+    .testimonial-grid > *:not(:nth-child(1)) { display: none; }
+  }
+
+  /* Booking modal — tighten the slot picker on phone */
+  @media (max-width: 640px) {
+    .bm-slot-btn { padding: 1rem 0.25rem !important; }
+    .bm-slot-btn span { font-size: 0.9rem !important; }
+    .bm-day-header { padding: 0.65rem 0.4rem 0.5rem !important; }
+    .bm-day-name { font-size: 0.95rem !important; }
+    .bm-day-date { font-size: 0.55rem !important; }
+    .bm-step-label { display: none !important; }
+    .bm-week-label { font-size: 0.6rem !important; }
+    .bm-pair-session-box { padding: 0.5rem 0.6rem !important; }
+    .bm-pair-session-text { font-size: 0.6rem !important; }
+  }
 }
 
-/* 1px gold horizontal rule */
-.gold-rule {
-  display: block;
-  width: 2.5rem;
-  height: 1px;
-  background: var(--gold);
-  margin: 1.25rem 0 1.75rem;
-}
-
-/* ─── Marquee ───────────────────────────────────────────────────────── */
+/* ─── Keyframes (global — not layer-scoped) ────────────────────────── */
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-
-.marquee-inner {
-  display: inline-flex;
-  gap: 2.5rem;
-  animation: marquee 22s linear infinite;
-  white-space: nowrap;
-}
-
-/* ─── Scroll offset for sticky nav ─────────────────────────────────── */
-[id] { scroll-margin-top: 5rem; }

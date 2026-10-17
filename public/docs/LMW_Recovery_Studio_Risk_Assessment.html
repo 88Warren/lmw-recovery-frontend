@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LMW Recovery — Studio Risk Assessment</title>
+<style>
+  :root{
+    --charcoal:#171717; --ivory:#F4F0EB; --gold:#C9A15B;
+    --stone:#78736C; --ink:#2b2b2b; --line:#d9d2c6; --soft:#faf7f1;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  body{
+    margin:0; background:#f3efe9; color:var(--ink);
+    font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+    font-size:13px; line-height:1.55;
+  }
+  .sheet{
+    max-width:1120px; margin:2.5rem auto; background:#fff;
+    padding:3rem 2.75rem 3.5rem;
+    box-shadow:0 10px 40px rgba(0,0,0,0.08);
+  }
+  header{border-bottom:2px solid var(--gold); padding-bottom:1.25rem; margin-bottom:1.25rem;}
+  .brand .mark{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:2.3rem; font-weight:600; color:var(--gold); letter-spacing:0.12em; line-height:1;
+  }
+  .brand .sub{font-size:0.5rem; font-weight:600; letter-spacing:0.75em; color:var(--charcoal); margin-top:4px;}
+  h1{font-family:'Cormorant Garamond',Georgia,serif; font-size:1.85rem; font-weight:600; color:var(--charcoal); margin:1.25rem 0 0.2rem;}
+  .meta{font-size:0.72rem; color:var(--stone); letter-spacing:0.04em;}
+  h2{font-family:'Cormorant Garamond',Georgia,serif; font-size:1.2rem; font-weight:600; color:var(--charcoal); margin:1.9rem 0 0.5rem;}
+  p{margin:0 0 0.8rem;}
+  table{width:100%; border-collapse:collapse; margin:0.5rem 0 1rem;}
+  th,td{border:1px solid var(--line); padding:0.45rem 0.55rem; text-align:left; vertical-align:top; font-size:0.74rem;}
+  th{background:var(--soft); color:var(--charcoal); font-weight:600;}
+
+  /* Admin / detail blocks */
+  .admin{width:100%; border-collapse:collapse; margin:0.5rem 0 1.5rem;}
+  .admin td{border:1px solid var(--line); padding:0.5rem 0.7rem; font-size:0.78rem;}
+  .admin td.k{background:var(--soft); font-weight:600; width:26%; color:var(--charcoal);}
+
+  /* Steps */
+  .steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:0.6rem; margin:0.5rem 0 1.25rem;}
+  .step{background:var(--soft); border-left:3px solid var(--gold); padding:0.6rem 0.8rem; font-size:0.76rem;}
+  .step b{display:block; color:var(--charcoal); margin-bottom:0.15rem;}
+
+  /* Scoring matrix */
+  .scorewrap{display:flex; flex-wrap:wrap; gap:2rem; align-items:flex-start; margin:0.5rem 0 1rem;}
+  .matrix{border-collapse:collapse;}
+  .matrix td,.matrix th{border:1px solid var(--line); width:30px; height:30px; text-align:center; font-size:0.72rem; padding:0;}
+  .matrix .axis{background:var(--charcoal); color:#fff; font-weight:600;}
+  .matrix .corner{background:var(--charcoal);}
+  .s-vlow{background:#e7f3e8;} .s-low{background:#d6ecd8;}
+  .s-med{background:#fdeccf;} .s-mhigh{background:#f8d6c6;} .s-high{background:#f3c0c0;}
+  .keylist{font-size:0.74rem; color:#444;}
+  .keylist b{color:var(--charcoal);}
+
+  .rating{white-space:nowrap; font-weight:700; text-align:center;}
+  .r-low{color:#2e7d32;} .r-med{color:#b26a00;} .r-high{color:#c62828;}
+
+  .note{background:var(--soft); border-left:3px solid var(--gold); padding:0.85rem 1.05rem; font-size:0.8rem; color:#4a463f; margin:1.25rem 0;}
+  .sign{display:grid; grid-template-columns:1fr 1fr; gap:0.4rem 2.5rem; margin-top:1.5rem; font-size:0.78rem;}
+  .sign .row{display:flex; justify-content:space-between; border-bottom:1px solid var(--line); padding:0.35rem 0;}
+  .sign .row span:first-child{color:var(--stone);}
+  footer{margin-top:2.25rem; padding-top:0.9rem; border-top:1px solid var(--line); font-size:0.7rem; color:var(--stone); display:flex; flex-wrap:wrap; justify-content:space-between; gap:0.5rem;}
+  @media print{
+    body{background:#fff;}
+    .sheet{box-shadow:none; margin:0; max-width:none; padding:1cm;}
+    h2{break-after:avoid;} tr{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <div class="brand"><div class="mark">LMW</div><div class="sub">RECOVERY</div></div>
+    <h1>Risk Assessment — Massage Studio</h1>
+    <div class="meta">Sports &amp; Remedial Massage Therapy &nbsp;·&nbsp; Private garden studio, Llantrisant, RCT</div>
+  </header>
+
+  <table class="admin">
+    <tr><td class="k">Business</td><td>LMW Recovery</td><td class="k">Assessor</td><td>Laura Warren (Therapist / Owner)</td></tr>
+    <tr><td class="k">Activity assessed</td><td>Sports &amp; remedial massage treatment and use of the studio</td><td class="k">Assessment type</td><td>Specific</td></tr>
+    <tr><td class="k">Location</td><td>Private garden studio, Llantrisant, RCT</td><td class="k">Assessment date</td><td>16 October 2026</td></tr>
+    <tr><td class="k">Assessor's signature</td><td>L. Warren</td><td class="k">Review date</td><td>16 October 2027 (or sooner if required)</td></tr>
+    <tr><td class="k">Relevant guidance</td><td colspan="3">Health &amp; Safety at Work etc. Act 1974; Management of Health &amp; Safety at Work Regulations 1999; professional body &amp; insurer requirements; manufacturer instructions for couch and electrical equipment; UK GDPR / Data Protection Act 2018.</td></tr>
+  </table>
+
+  <h2>5-Step Process</h2>
+  <div class="steps">
+    <div class="step"><b>Step 1</b>Identify the hazards.</div>
+    <div class="step"><b>Step 2</b>Decide who might be harmed and how.</div>
+    <div class="step"><b>Step 3</b>Evaluate the risks and decide on control measures.</div>
+    <div class="step"><b>Step 4</b>Record findings and implement the control measures.</div>
+    <div class="step"><b>Step 5</b>Review and update as necessary.</div>
+  </div>
+
+  <h2>Risk Score (Likelihood × Impact)</h2>
+  <div class="scorewrap">
+    <table class="matrix" aria-label="5 by 5 risk matrix">
+      <tr><td class="corner"></td><th class="axis" colspan="5">Likelihood &rarr;</th></tr>
+      <tr><th class="axis">I&nbsp;5</th><td class="s-med">5</td><td class="s-mhigh">10</td><td class="s-mhigh">15</td><td class="s-high">20</td><td class="s-high">25</td></tr>
+      <tr><th class="axis">I&nbsp;4</th><td class="s-low">4</td><td class="s-med">8</td><td class="s-mhigh">12</td><td class="s-mhigh">16</td><td class="s-high">20</td></tr>
+      <tr><th class="axis">I&nbsp;3</th><td class="s-vlow">3</td><td class="s-low">6</td><td class="s-med">9</td><td class="s-mhigh">12</td><td class="s-mhigh">15</td></tr>
+      <tr><th class="axis">I&nbsp;2</th><td class="s-vlow">2</td><td class="s-low">4</td><td class="s-low">6</td><td class="s-med">8</td><td class="s-mhigh">10</td></tr>
+      <tr><th class="axis">I&nbsp;1</th><td class="s-vlow">1</td><td class="s-vlow">2</td><td class="s-vlow">3</td><td class="s-low">4</td><td class="s-med">5</td></tr>
+      <tr><th class="corner"></th><th class="axis">1</th><th class="axis">2</th><th class="axis">3</th><th class="axis">4</th><th class="axis">5</th></tr>
+    </table>
+    <div class="keylist">
+      <p><b>Likelihood:</b> 1 Remote/Rare · 2 Unlikely · 3 Possible · 4 Probable · 5 Highly probable.</p>
+      <p><b>Impact:</b> 1 Minor (first aid) · 2 Moderate · 3 Major · 4 Severe · 5 Critical.</p>
+      <p><b>Managing the result:</b> 1–3 very low · 4–9 low · 10–14 medium · 15–19 medium–high · 20–25 high.
+      Risks are reduced to as low as reasonably practicable (ALARP) through the controls below.</p>
+    </div>
+  </div>
+
+  <h2>Hazard Assessment</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:3%">Ref</th>
+        <th style="width:15%">Hazard identified</th>
+        <th style="width:17%">Who might be harmed &amp; how</th>
+        <th style="width:33%">Existing control measures</th>
+        <th style="width:4%">L</th><th style="width:4%">I</th><th style="width:5%">Score</th>
+        <th style="width:19%">Residual risk acceptable? / further action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Slips, trips &amp; falls — oil spills, wet floor, trailing cables, entrance step</td>
+        <td>Client &amp; therapist — bruising, sprains, fractures from a fall</td>
+        <td>Floor kept clear and dry; spills wiped immediately; oils/towels stored tidily; cables routed away from walkways; non-slip flooring; studio and entrance well lit.</td>
+        <td class="rating">2</td><td class="rating">3</td><td class="rating r-low">6</td>
+        <td><b>Yes</b> — low/ALARP. Monitor; re-check lighting in winter months.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Access to/from studio — garden path, uneven ground, poor light, ice/leaves</td>
+        <td>Client — slip or trip approaching or leaving the studio</td>
+        <td>Path kept even, swept and clear; outdoor lighting for evening appointments; grit/salt applied in icy conditions; clients shown the route and advised on arrival.</td>
+        <td class="rating">2</td><td class="rating">2</td><td class="rating r-low">4</td>
+        <td><b>Yes</b> — low/ALARP. Dynamic check of path condition before each appointment in poor weather.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Massage couch failure or fall from couch</td>
+        <td>Client — fall, impact injury</td>
+        <td>Couch checked before each use and kept within rated weight limit; height set for safe mounting/dismounting; client assisted on and off; client never left unattended on the couch.</td>
+        <td class="rating">2</td><td class="rating">3</td><td class="rating r-low">6</td>
+        <td><b>Yes</b> — low/ALARP. Couch serviced per manufacturer guidance; log any defect and remove from use.</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Electrical equipment — heater, lamp, towel warmer, chargers</td>
+        <td>Client &amp; therapist — electric shock, burn, fire</td>
+        <td>Visual check of plugs/leads before use; PAT testing where applicable; sockets not overloaded; damaged items withdrawn; equipment switched off when not in use.</td>
+        <td class="rating">1</td><td class="rating">3</td><td class="rating r-low">3</td>
+        <td><b>Yes</b> — very low/ALARP. Annual PAT check.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Hot items — towel warmer, heat packs, wax</td>
+        <td>Client — burns/scalds, especially where sensation is reduced</td>
+        <td>Temperature checked before skin contact; barrier/towel used; not applied over broken skin or areas of reduced sensation; client asked to confirm comfort.</td>
+        <td class="rating">1</td><td class="rating">2</td><td class="rating r-low">2</td>
+        <td><b>Yes</b> — very low/ALARP.</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Treating a contraindicated condition or undisclosed health issue</td>
+        <td>Client — worsening of an existing condition; adverse health event</td>
+        <td>Health screening completed before first treatment and reviewed each visit; contraindications checked; GP clearance sought where required; treatment adapted, localised or declined as appropriate; therapist works within scope of training.</td>
+        <td class="rating">2</td><td class="rating">4</td><td class="rating r-med">8</td>
+        <td><b>Yes</b> — low/ALARP. Keep screening and CPD current; refer on where appropriate.</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Adverse reaction — soreness, bruising, dizziness, allergy to medium</td>
+        <td>Client — discomfort, allergic reaction, faintness</td>
+        <td>Allergy check before selecting oil/wax; pressure matched to feedback; client monitored throughout and can stop at any time; aftercare advice given; medical referral if needed.</td>
+        <td class="rating">2</td><td class="rating">2</td><td class="rating r-low">4</td>
+        <td><b>Yes</b> — low/ALARP.</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Manual-handling / positioning injury during treatment</td>
+        <td>Client &amp; therapist — musculoskeletal strain</td>
+        <td>Safe therapist posture and technique; couch at correct working height; client positioned and draped for comfort and support; regular breaks between clients.</td>
+        <td class="rating">2</td><td class="rating">2</td><td class="rating r-low">4</td>
+        <td><b>Yes</b> — low/ALARP.</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Cross-infection — contact surfaces, linens, hands</td>
+        <td>Client &amp; therapist — transmission of infection</td>
+        <td>Fresh couch roll/clean towels per client; couch and surfaces cleaned and disinfected between clients; hands washed/sanitised before and after; cuts covered; therapist does not treat when unwell.</td>
+        <td class="rating">2</td><td class="rating">2</td><td class="rating r-low">4</td>
+        <td><b>Yes</b> — low/ALARP.</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Contagious illness (client or therapist)</td>
+        <td>Client &amp; therapist — spread of infection</td>
+        <td>Clients asked not to attend if feverish or contagious and appointments rescheduled without penalty; therapist cancels if unwell.</td>
+        <td class="rating">1</td><td class="rating">2</td><td class="rating r-low">2</td>
+        <td><b>Yes</b> — very low/ALARP.</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Fire</td>
+        <td>Client &amp; therapist — burns, smoke inhalation</td>
+        <td>Clear, unobstructed exit; smoke alarm tested regularly; sockets not overloaded; heaters/candles never left unattended; client made aware of the exit on arrival.</td>
+        <td class="rating">1</td><td class="rating">4</td><td class="rating r-low">4</td>
+        <td><b>Yes</b> — low/ALARP. Test alarm monthly; keep extinguisher/blanket accessible.</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Medical emergency / client becomes unwell</td>
+        <td>Client — delayed treatment of a serious event</td>
+        <td>Current first-aid certificate held; first-aid kit on site; emergency contact recorded on screening form; charged phone to hand to call 999; appropriate insurance in place.</td>
+        <td class="rating">1</td><td class="rating">4</td><td class="rating r-low">4</td>
+        <td><b>Yes</b> — low/ALARP. First-aid certificate kept in date.</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Lone working — treating clients alone</td>
+        <td>Therapist — vulnerability if an incident occurs with no one present</td>
+        <td>Appointments logged; a trusted contact knows the daily schedule; phone charged and accessible; new clients screened; right to decline or end a session reserved.</td>
+        <td class="rating">2</td><td class="rating">3</td><td class="rating r-low">6</td>
+        <td><b>Yes</b> — low/ALARP. Keep check-in arrangement with trusted contact.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    All hazards above are assessed as <strong>low or very low (ALARP)</strong> with the existing controls in place.
+    Alongside this generic assessment, a dynamic risk assessment is carried out for each appointment — if the
+    activity, the premises, the equipment or conditions change, controls are reviewed and adjusted so risks
+    remain ALARP.
+  </div>
+
+  <h2>Review (Step 5)</h2>
+  <p>This assessment is reviewed at least annually, and sooner following any accident or near miss, a change to
+  the premises, equipment or working practices, or where there is reason to doubt that the controls remain
+  effective.</p>
+
+  <div class="sign">
+    <div class="row"><span>Assessed &amp; approved by</span><span>Laura Warren</span></div>
+    <div class="row"><span>Date</span><span>16 October 2026</span></div>
+    <div class="row"><span>Signature</span><span>L. Warren</span></div>
+    <div class="row"><span>Next review date</span><span>16 October 2027</span></div>
+  </div>
+
+  <footer>
+    <span>LMW Recovery &nbsp;·&nbsp; Studio Risk Assessment</span>
+    <span>info@lmwrecovery.co.uk &nbsp;·&nbsp; 07516 606668</span>
+  </footer>
+</div>
+</body>
+</html>

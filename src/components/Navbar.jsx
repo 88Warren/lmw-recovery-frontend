@@ -7,14 +7,33 @@ const NAV = [
   { label: 'Contact',    href: '#contact' },
 ]
 
+const MD_QUERY = '(min-width: 48rem)'
+
 export default function Navbar({ onBookClick }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  // Drive the desktop/mobile switch from an explicit media query rather than
+  // Tailwind's layered `md:` utilities, which the custom (unlayered) CSS in
+  // index.css can override — that caused the hamburger to show on desktop.
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(MD_QUERY).matches
+  )
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia(MD_QUERY)
+    const onChange = e => {
+      setIsDesktop(e.matches)
+      // Close the mobile menu if the viewport grows to desktop while it's open.
+      if (e.matches) setMenuOpen(false)
+    }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
   }, [])
 
   return (
@@ -38,7 +57,7 @@ export default function Navbar({ onBookClick }) {
         </a>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex" style={{ alignItems: 'center', gap: '2.5rem' }}>
+        <nav style={{ display: isDesktop ? 'flex' : 'none', alignItems: 'center', gap: '2.5rem' }}>
           {NAV.map(({ label, href }) => (
             <a key={label} href={href} style={{
               fontFamily: 'Montserrat, sans-serif',
@@ -54,7 +73,8 @@ export default function Navbar({ onBookClick }) {
 
         {/* Book Now + hamburger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <a href="#contact" className="hidden md:inline-block" style={{
+          <a href="#contact" style={{
+            display: isDesktop ? 'inline-block' : 'none',
             fontFamily: 'Montserrat, sans-serif',
             fontSize: '0.55rem', fontWeight: 600,
             letterSpacing: '0.25em', textTransform: 'uppercase',
@@ -69,10 +89,9 @@ export default function Navbar({ onBookClick }) {
           >Book a Session</a>
 
           <button
-            className="md:hidden"
             onClick={() => setMenuOpen(o => !o)}
             aria-label="Menu" aria-expanded={menuOpen}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', flexDirection: 'column', gap: '5px' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: isDesktop ? 'none' : 'flex', flexDirection: 'column', gap: '5px' }}
           >
             {[0,1,2].map(i => (
               <span key={i} style={{
@@ -90,7 +109,8 @@ export default function Navbar({ onBookClick }) {
       </div>
 
       {/* Mobile menu */}
-      <div className="md:hidden" style={{
+      <div style={{
+        display: isDesktop ? 'none' : 'block',
         overflow: 'hidden',
         maxHeight: menuOpen ? '400px' : '0',
         transition: 'max-height 0.35s ease',

@@ -87,17 +87,6 @@ export default function Testimonials() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 640px) {
-          .testimonial-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .testimonial-grid > *:not(:nth-child(1)) {
-            display: none;
-          }
-        }
-      `}</style>
     </section>
   )
 }

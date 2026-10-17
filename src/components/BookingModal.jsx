@@ -708,19 +708,6 @@ export default function BookingModal({ open, onClose, preselected }) {
       padding: isMobile ? 0 : '1rem',
     }}>
       {/* Mobile: full-screen. Desktop: max-width card */}
-      <style>{`
-        @media (max-width: 640px) {
-          .bm-slot-btn { padding: 1rem 0.25rem !important; }
-          .bm-slot-btn span { font-size: 0.9rem !important; }
-          .bm-day-header { padding: 0.65rem 0.4rem 0.5rem !important; }
-          .bm-day-name { font-size: 0.95rem !important; }
-          .bm-day-date { font-size: 0.55rem !important; }
-          .bm-step-label { display: none !important; }
-          .bm-week-label { font-size: 0.6rem !important; }
-          .bm-pair-session-box { padding: 0.5rem 0.6rem !important; }
-          .bm-pair-session-text { font-size: 0.6rem !important; }
-        }
-      `}</style>
       <div onClick={e => e.stopPropagation()} className="bm-panel bm-backdrop" style={{
         backgroundColor:'#171717', borderTop:'2px solid #C9A15B',
         width:'100%', maxWidth: isMobile ? '100%' : '640px',

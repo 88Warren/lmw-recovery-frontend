@@ -63,8 +63,8 @@ export default function Footer() {
         <div>
           <ColHead>Contact</ColHead>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            <ContactRow icon="email" href="mailto:hello@lmwrecovery.co.uk">hello@lmwrecovery.co.uk</ContactRow>
-            <ContactRow icon="phone" href="tel:07810123456">07810 123456</ContactRow>
+            <ContactRow icon="email" href="mailto:info@lmwrecovery.co.uk">info@lmwrecovery.co.uk</ContactRow>
+            <ContactRow icon="phone" href="tel:07516606668">07516 606668</ContactRow>
             <ContactRow icon="web"   href="https://lmwrecovery.co.uk">lmwrecovery.co.uk</ContactRow>
           </ul>
         </div>
@@ -84,10 +84,10 @@ export default function Footer() {
         }}>
           &copy; {new Date().getFullYear()} LMW Recovery &nbsp;·&nbsp; Move. Recover. Perform.
         </p>
-        <div style={{ display: 'flex', gap: '1.5rem' }}>
-          {['Privacy Policy', 'Terms & Conditions'].map(l => (
-            <FooterLink key={l} href="#">{l}</FooterLink>
-          ))}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
+          <FooterLink href="/docs/LMW_Recovery_Privacy_Policy.html">Privacy Policy</FooterLink>
+          <FooterLink href="/docs/LMW_Recovery_Terms_of_Service.html">Terms &amp; Conditions</FooterLink>
+          <FooterLink href="/docs/LMW_Recovery_Studio_Risk_Assessment.html">Risk Assessment</FooterLink>
         </div>
       </div>
     </footer>
@@ -108,7 +108,7 @@ function ColHead({ children }) {
 
 function FooterLink({ href, children }) {
   return (
-    <a href={href} style={{
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{
       fontFamily: 'Montserrat, sans-serif', fontSize: '0.65rem',
       fontWeight: 300, color: '#78736C', textDecoration: 'none',
       transition: 'color 0.2s',

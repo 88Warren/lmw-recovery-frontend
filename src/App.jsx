@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { initConsent } from './cookies'
 import Navbar         from './components/Navbar'
 import Hero           from './components/Hero'
 import Marquee        from './components/Marquee'
@@ -9,6 +10,7 @@ import Treatments     from './components/Treatments'
 import ContactSection from './components/ContactSection'
 import BookingModal   from './components/BookingModal'
 import Footer         from './components/Footer'
+import CookieBanner   from './components/CookieBanner'
 
 export default function App() {
   const [modalOpen, setModalOpen]               = useState(false)
@@ -23,6 +25,9 @@ export default function App() {
     setModalOpen(false)
     setPreselected(null)
   }, [])
+
+  // Re-apply a previously granted analytics consent on load.
+  useEffect(() => { initConsent() }, [])
 
   return (
     <>
@@ -45,6 +50,8 @@ export default function App() {
         onClose={closeModal}
         preselected={preselected}
       />
+
+      <CookieBanner />
     </>
   )
 }
