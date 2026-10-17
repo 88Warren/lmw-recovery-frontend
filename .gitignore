@@ -32,7 +32,10 @@ backend/lmw.db-shm
 backend/lmw.db-wal
 
 # ── Frontend ─────────────────────────────────────────────────────────────────
+# NOTE: .env.production is intentionally TRACKED. The frontend is a static Vite
+# build; its VITE_* values (API URL, Stripe PUBLISHABLE key, GA id) are all
+# public — they ship in the browser bundle — and the CI pipeline needs this file
+# at build time. It must NOT contain any secret (no sk_live, no API secrets).
 .env
 .env.local
-.env.production
 .env.development
