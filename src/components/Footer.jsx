@@ -32,16 +32,6 @@ export default function Footer() {
           }}>
             Sports &amp; remedial massage therapy.<br />Move. Recover. Perform.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem' }}>
-            <SocialIcon href="https://instagram.com" label="Instagram">
-              <rect x="2" y="2" width="20" height="20" rx="5"/>
-              <circle cx="12" cy="12" r="4"/>
-              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-            </SocialIcon>
-            <SocialIcon href="https://facebook.com" label="Facebook">
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-            </SocialIcon>
-          </div>
         </div>
 
         {/* Studio */}
@@ -116,21 +106,6 @@ function FooterLink({ href, children }) {
     onMouseEnter={e => e.currentTarget.style.color = '#C9A15B'}
     onMouseLeave={e => e.currentTarget.style.color = '#78736C'}
     >{children}</a>
-  )
-}
-
-function SocialIcon({ href, label, children }) {
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} style={{
-      color: '#78736C', textDecoration: 'none', transition: 'color 0.2s',
-    }}
-    onMouseEnter={e => e.currentTarget.style.color = '#C9A15B'}
-    onMouseLeave={e => e.currentTarget.style.color = '#78736C'}
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        {children}
-      </svg>
-    </a>
   )
 }
 
