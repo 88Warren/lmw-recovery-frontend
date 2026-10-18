@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { api } from '../api'
+import RequestLinkPanel from './RequestLinkPanel'
 
 /* ─── Constants ─────────────────────────────────────────────────────────── */
 
@@ -594,7 +595,7 @@ function TreatmentPicker({ treatments, selected, onSelect, slotFreeMinutesForFit
 
 /* ─── Main modal ────────────────────────────────────────────────────────── */
 
-export default function BookingModal({ open, onClose, preselected }) {
+export default function BookingModal({ open, onClose, preselected, memberContext }) {
   // step: 0=DateTime, 1=Treatment, 1.5=SecondSession(maintenance), 2=Details, 3=Confirmed
   const [step, setStep]               = useState(0)
   const [selected, setSelected]       = useState(null)    // treatment object
@@ -654,6 +655,18 @@ export default function BookingModal({ open, onClose, preselected }) {
       setStep(matched.id === 'maintenance-plan' ? 1 : 0)
     }
   }, [open, preselected])
+
+  // Verified member (arrived via magic link): lock the Maintenance Plan and
+  // prefill their verified email so they can't book on a different address.
+  useEffect(() => {
+    if (open && memberContext?.email) {
+      const plan = FALLBACK_TREATMENTS.find(t => t.id === 'maintenance-plan')
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelected(plan)
+      setStep(1)
+      setForm(f => ({ ...f, email: memberContext.email }))
+    }
+  }, [open, memberContext])
 
   useEffect(() => {
     if (!open) return
@@ -729,7 +742,10 @@ export default function BookingModal({ open, onClose, preselected }) {
     setSubmitting(true); setSubmitError('')
     try {
       if (isMaintenance) {
-        await api.createBookingPair({
+        // Maintenance Plan = £80/month subscription covering 2 sessions.
+        // New members are sent to Stripe to subscribe; existing active members
+        // have their sessions confirmed straight away (no new payment).
+        const res = await api.createBookingPair({
           slot_id_1:                 pair[0].id,
           slot_id_2:                 pair[1].id,
           treatment:                 selected.name,
@@ -738,9 +754,20 @@ export default function BookingModal({ open, onClose, preselected }) {
           client_email:              form.email.trim(),
           client_phone:              form.phone.trim(),
           notes:                     form.notes.trim(),
+          // When a verified member (via magic link), include the token so the
+          // sessions are booked on their plan without paying again.
+          member_token:              memberContext?.token ?? '',
         })
+        if (res?.checkout_url) {
+          window.location.assign(res.checkout_url)
+          return // navigating away to Stripe
+        }
+        setStep(3) // existing member — confirmed without payment
       } else {
-        await api.createBooking({
+        // Single treatment: reserve + get a Stripe Checkout URL, then redirect
+        // the browser to Stripe to pay. The booking confirms via webhook on
+        // return. We do NOT advance to the Confirmed step here.
+        const res = await api.createBooking({
           slot_id:                   selectedSlot.id,
           treatment:                 selected.name,
           treatment_duration_minutes: selected.duration_minutes,
@@ -749,11 +776,14 @@ export default function BookingModal({ open, onClose, preselected }) {
           client_phone:              form.phone.trim(),
           notes:                     form.notes.trim(),
         })
+        if (res?.checkout_url) {
+          window.location.assign(res.checkout_url)
+          return // leave submitting=true; the page is navigating away
+        }
+        throw new Error('Could not start payment. Please try again.')
       }
-      setStep(3)
     } catch (err) {
       setSubmitError(err.message)
-    } finally {
       setSubmitting(false)
     }
   }
@@ -894,8 +924,19 @@ export default function BookingModal({ open, onClose, preselected }) {
           <div>
             <div style={{ borderLeft:'2px solid #C9A15B', paddingLeft:'1rem', marginBottom:'1.5rem' }}>
               <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.6rem', fontWeight:600, letterSpacing:'0.15em', textTransform:'uppercase', color:'#C9A15B', marginBottom:'0.2rem' }}>Maintenance Plan</p>
-              <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.72rem', fontWeight:300, color:'#B8AEA0' }}>Select 2 sessions for your fortnightly plan.</p>
+              <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.72rem', fontWeight:300, color:'#B8AEA0' }}>Select 2 sessions for your {memberContext ? 'plan this month' : 'fortnightly plan'}.</p>
             </div>
+            {memberContext ? (
+              <div style={{ padding:'0.6rem 1rem', marginBottom:'1rem', backgroundColor:'rgba(201,161,91,0.08)', borderLeft:'2px solid #C9A15B' }}>
+                <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.62rem', fontWeight:300, color:'#B8AEA0', lineHeight:1.6 }}>
+                  Booking on your active plan as <span style={{ color:'#F4F0EB' }}>{memberContext.email}</span> — no further payment.
+                </p>
+              </div>
+            ) : (
+              <div style={{ padding:'0.75rem 1rem', marginBottom:'1rem', border:'1px solid rgba(201,161,91,0.15)' }}>
+                <RequestLinkPanel />
+              </div>
+            )}
             <PairCalendar
               slots={slotsForTreatment}
               loading={slotsForTreatmentLoading}
@@ -943,7 +984,9 @@ export default function BookingModal({ open, onClose, preselected }) {
             </Field>
 
             <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.62rem', fontWeight:300, color:'#78736C', lineHeight:1.7 }}>
-              You'll receive a confirmation email immediately. A health questionnaire will follow, please complete it before your session.
+              {isMaintenance
+                ? "The Maintenance Plan is £80/month covering 2 sessions. You'll be taken to our secure payment page to set up your monthly plan — cancel anytime. Already a member? Use the same email and your sessions are booked without paying again."
+                : "You'll be taken to our secure payment page to pay and confirm your booking. A confirmation email and health questionnaire follow once payment is complete."}
             </p>
 
             {submitError && <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.7rem', color:'#e07070', padding:'0.75rem 1rem', backgroundColor:'rgba(224,112,112,0.08)', border:'1px solid rgba(224,112,112,0.2)' }}>{submitError}</p>}
@@ -951,7 +994,9 @@ export default function BookingModal({ open, onClose, preselected }) {
             <div style={{ display:'flex', gap:'0.75rem' }}>
               <GoldBtn variant="outline" onClick={() => setStep(selected && preselected ? 0 : 1)} disabled={submitting}>Back</GoldBtn>
               <GoldBtn onClick={handleSubmit} disabled={submitting} fullWidth>
-                {submitting ? 'Confirming…' : 'Confirm Booking'}
+                {submitting
+                  ? 'Redirecting to payment…'
+                  : (isMaintenance ? 'Set Up Plan & Confirm' : `Pay ${selected?.price ?? ''} & Confirm`)}
               </GoldBtn>
             </div>
           </div>

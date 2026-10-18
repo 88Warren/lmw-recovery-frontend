@@ -4,8 +4,11 @@ import AdminLogin    from './AdminLogin'
 import AdminSlots    from './AdminSlots'
 import AdminBookings from './AdminBookings'
 import AdminContacts from './AdminContacts'
+import AdminCalendar from './AdminCalendar'
 
 const NAV = [
+  { id: 'diary',    label: 'Diary',
+    icon: <><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h8M8 18h5"/></> },
   { id: 'slots',    label: 'Availability',
     icon: <path d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/> },
   { id: 'bookings', label: 'Bookings',
@@ -16,7 +19,7 @@ const NAV = [
 
 export default function Admin() {
   const { login, logout, isAuthed } = useAdminAuth()
-  const [tab, setTab] = useState('slots')
+  const [tab, setTab] = useState('diary')
 
   if (!isAuthed) return <AdminLogin onLogin={login} />
 
@@ -96,6 +99,7 @@ export default function Admin() {
 
         {/* ── Main content ── */}
         <main style={{ flex: 1, overflowY: 'auto', padding: '2rem 2.5rem' }}>
+          {tab === 'diary'    && <AdminCalendar />}
           {tab === 'slots'    && <AdminSlots />}
           {tab === 'bookings' && <AdminBookings />}
           {tab === 'contacts' && <AdminContacts />}

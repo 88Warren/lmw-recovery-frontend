@@ -24,12 +24,23 @@ export default function AdminBookings() {
 
   useEffect(() => { load() }, [load]) // eslint-disable-line react-hooks/set-state-in-effect
 
-  async function handleCancel(id) {
-    if (!confirm('Cancel this booking? The slot will be freed.')) return
+  const [confirmingId, setConfirmingId] = useState(null) // booking id awaiting inline confirm
+  const [cancelBusy, setCancelBusy]     = useState(false)
+  const [cancelError, setCancelError]   = useState('')
+
+  async function handleCancel(b) {
+    setCancelBusy(true); setCancelError('')
     try {
-      await adminApi.cancelBooking(id)
-      setBookings(bs => bs.map(b => b.id === id ? { ...b, status: 'cancelled' } : b))
-    } catch (e) { alert(e.message) }
+      const res = await adminApi.cancelBooking(b.id)
+      setBookings(bs => bs.map(x => x.id === b.id
+        ? { ...x, status: 'cancelled', refund_status: res.refunded ? 'refunded' : x.refund_status, cancellation_requested: false }
+        : x))
+      setConfirmingId(null)
+    } catch (e) {
+      setCancelError(e.message)
+    } finally {
+      setCancelBusy(false)
+    }
   }
 
   const visible = bookings.filter(b => filter === 'all' || b.status === filter)
@@ -88,6 +99,7 @@ export default function AdminBookings() {
                 <tr key={b.id} style={{
                   borderBottom: '1px solid rgba(201,161,91,0.08)',
                   opacity: b.status === 'cancelled' ? 0.5 : 1,
+                  backgroundColor: b.cancellation_requested && b.status !== 'cancelled' ? 'rgba(224,112,112,0.07)' : 'transparent',
                 }}>
                   <td style={styles.td}>{fmtDate(b.starts_at)}</td>
                   <td style={styles.td}>{b.treatment}</td>
@@ -109,10 +121,30 @@ export default function AdminBookings() {
                   <td style={styles.td}>{b.client_phone || '—'}</td>
                   <td style={styles.td}>
                     <StatusPill status={b.status} brevo={b.brevo_sent} />
+                    {b.cancellation_requested && b.status !== 'cancelled' && (
+                      <span style={{ display: 'block', marginTop: '0.3rem', fontFamily: 'Montserrat, sans-serif', fontSize: '0.45rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e07070' }}>
+                        ⚠ cancellation requested
+                      </span>
+                    )}
+                    {b.refund_status === 'refunded' && (
+                      <span style={{ display: 'block', marginTop: '0.3rem', fontFamily: 'Montserrat, sans-serif', fontSize: '0.45rem', color: '#6fcf97' }}>
+                        ✓ refunded
+                      </span>
+                    )}
                   </td>
                   <td style={{ ...styles.td, textAlign: 'right' }}>
-                    {b.status === 'confirmed' && (
-                      <CancelBtn onClick={() => handleCancel(b.id)} />
+                    {(b.status === 'confirmed' || b.status === 'pending') && (
+                      confirmingId === b.id ? (
+                        <InlineCancelConfirm
+                          booking={b}
+                          busy={cancelBusy}
+                          error={cancelError}
+                          onConfirm={() => handleCancel(b)}
+                          onDismiss={() => { setConfirmingId(null); setCancelError('') }}
+                        />
+                      ) : (
+                        <CancelBtn onClick={() => { setConfirmingId(b.id); setCancelError('') }} />
+                      )
                     )}
                   </td>
                 </tr>
@@ -140,6 +172,30 @@ function StatusPill({ status, brevo }) {
           {brevo ? '✓ questionnaire sent' : '○ questionnaire pending'}
         </span>
       )}
+    </div>
+  )
+}
+
+function InlineCancelConfirm({ booking, busy, error, onConfirm, onDismiss }) {
+  const willRefund = !booking.is_member && booking.payment_status === 'paid' && booking.refund_status !== 'refunded'
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.35rem' }}>
+      <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '0.5rem', color: '#B8AEA0', lineHeight: 1.5, textAlign: 'right' }}>
+        {willRefund ? 'Cancel + full refund?' : 'Cancel this booking?'}
+      </span>
+      <div style={{ display: 'flex', gap: '0.35rem' }}>
+        <button onClick={onConfirm} disabled={busy} style={{
+          fontFamily: 'Montserrat, sans-serif', fontSize: '0.45rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
+          backgroundColor: '#e07070', color: '#171717', border: '1px solid #e07070',
+          padding: '0.25rem 0.5rem', cursor: busy ? 'wait' : 'pointer', whiteSpace: 'nowrap',
+        }}>{busy ? '…' : 'Yes'}</button>
+        <button onClick={onDismiss} disabled={busy} style={{
+          fontFamily: 'Montserrat, sans-serif', fontSize: '0.45rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
+          backgroundColor: 'transparent', color: '#78736C', border: '1px solid rgba(120,115,108,0.3)',
+          padding: '0.25rem 0.5rem', cursor: busy ? 'wait' : 'pointer',
+        }}>No</button>
+      </div>
+      {error && <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '0.45rem', color: '#e07070', textAlign: 'right' }}>{error}</span>}
     </div>
   )
 }

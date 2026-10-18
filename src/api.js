@@ -34,11 +34,51 @@ export const api = {
     return request('GET', `/api/slots${qs ? '?' + qs : ''}`)
   },
 
-  /** POST /api/bookings */
+  /**
+   * POST /api/bookings — reserves the slot as pending and returns a Stripe
+   * Checkout URL. The caller should redirect the browser to checkout_url;
+   * the booking is only confirmed after payment (via the Stripe webhook).
+   */
   createBooking: (payload) => request('POST', '/api/bookings', payload),
 
   /** POST /api/bookings/pair — for maintenance plan (2 slots) */
   createBookingPair: (payload) => request('POST', '/api/bookings/pair', payload),
+
+  /** GET /api/bookings/status?session_id=… — poll after Stripe redirect */
+  getBookingStatus: (sessionId) =>
+    request('GET', `/api/bookings/status?session_id=${encodeURIComponent(sessionId)}`),
+
+  /** GET /api/subscriptions/status?email=… — is this email an active member? */
+  getSubscriptionStatus: (email) =>
+    request('GET', `/api/subscriptions/status?email=${encodeURIComponent(email)}`),
+
+  /** POST /api/subscriptions/portal — returns a Stripe Customer Portal URL */
+  openSubscriptionPortal: (email) =>
+    request('POST', '/api/subscriptions/portal', { email }),
+
+  /** POST /api/member/request-link — email a passwordless booking link */
+  requestMemberLink: (email) =>
+    request('POST', '/api/member/request-link', { email }),
+
+  /** GET /api/member/verify?token=… — validate a magic link token */
+  verifyMember: (token) =>
+    request('GET', `/api/member/verify?token=${encodeURIComponent(token)}`),
+
+  /** GET /api/bookings/manage?token=… — load a booking for self-service */
+  getManagedBooking: (token) =>
+    request('GET', `/api/bookings/manage?token=${encodeURIComponent(token)}`),
+
+  /** POST /api/bookings/reschedule — move a booking to a new slot */
+  rescheduleBooking: (token, newSlotId) =>
+    request('POST', '/api/bookings/reschedule', { token, new_slot_id: newSlotId }),
+
+  /** POST /api/bookings/request-cancellation — ask the studio to cancel */
+  requestCancellation: (token, reason) =>
+    request('POST', '/api/bookings/request-cancellation', { token, reason }),
+
+  /** POST /api/bookings/manage-portal — Stripe portal to cancel a plan */
+  openManagePortal: (token) =>
+    request('POST', '/api/bookings/manage-portal', { token }),
 
   /** POST /api/contact */
   sendContact: (payload) => request('POST', '/api/contact', payload),

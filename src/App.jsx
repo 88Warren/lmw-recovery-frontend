@@ -1,6 +1,9 @@
 import { useState, useCallback, useEffect } from 'react'
 import { initConsent } from './cookies'
-import Navbar         from './components/Navbar'
+import BookingReturn   from './components/BookingReturn'
+import MemberAccess    from './components/MemberAccess'
+import ManageBooking   from './components/ManageBooking'
+import Navbar          from './components/Navbar'
 import Hero           from './components/Hero'
 import Marquee        from './components/Marquee'
 import About          from './components/About'
@@ -28,6 +31,13 @@ export default function App() {
 
   // Re-apply a previously granted analytics consent on load.
   useEffect(() => { initConsent() }, [])
+
+  // Stripe Checkout return pages. The app has no router, so branch on the path.
+  const path = typeof window !== 'undefined' ? window.location.pathname : '/'
+  if (path.startsWith('/booking/success')) return <BookingReturn />
+  if (path.startsWith('/booking/cancelled')) return <BookingReturn cancelled />
+  if (path.startsWith('/booking/member')) return <MemberAccess />
+  if (path.startsWith('/booking/manage')) return <ManageBooking />
 
   return (
     <>
