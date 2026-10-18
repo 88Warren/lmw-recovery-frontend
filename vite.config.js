@@ -18,10 +18,11 @@ function devRouteFallback() {
           req.url = '/admin.html'
         } else if (
           path === '/booking/success' || path === '/booking/cancelled' ||
-          path === '/booking/member' || path === '/booking/manage'
+          path === '/booking/member' || path === '/booking/manage' ||
+          path === '/booking/screening'
         ) {
-          // Preserve the query string (Stripe appends ?session_id=…; the member
-          // and manage links append ?token=…).
+          // Preserve the query string (Stripe appends ?session_id=…; the member,
+          // manage and screening links append ?token=…).
           const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
           req.url = '/index.html' + qs
         }

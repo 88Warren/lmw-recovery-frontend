@@ -39,4 +39,8 @@ export const adminApi = {
 
   // Contacts
   listContacts: () => request('GET', '/api/admin/contacts'),
+
+  // Screening forms
+  listScreening: ()   => request('GET', '/api/admin/screening'),
+  getScreening:  (id) => request('GET', `/api/admin/screening/${id}`),
 }

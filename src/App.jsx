@@ -3,6 +3,7 @@ import { initConsent } from './cookies'
 import BookingReturn   from './components/BookingReturn'
 import MemberAccess    from './components/MemberAccess'
 import ManageBooking   from './components/ManageBooking'
+import ScreeningForm   from './components/ScreeningForm'
 import Navbar          from './components/Navbar'
 import Hero           from './components/Hero'
 import Marquee        from './components/Marquee'
@@ -38,6 +39,7 @@ export default function App() {
   if (path.startsWith('/booking/cancelled')) return <BookingReturn cancelled />
   if (path.startsWith('/booking/member')) return <MemberAccess />
   if (path.startsWith('/booking/manage')) return <ManageBooking />
+  if (path.startsWith('/booking/screening')) return <ScreeningForm />
 
   return (
     <>

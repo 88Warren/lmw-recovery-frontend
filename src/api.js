@@ -80,6 +80,13 @@ export const api = {
   openManagePortal: (token) =>
     request('POST', '/api/bookings/manage-portal', { token }),
 
+  /** GET /api/screening?token=… — load the client's name + submission status */
+  getScreening: (token) =>
+    request('GET', `/api/screening?token=${encodeURIComponent(token)}`),
+
+  /** POST /api/screening — submit the completed health screening form */
+  submitScreening: (payload) => request('POST', '/api/screening', payload),
+
   /** POST /api/contact */
   sendContact: (payload) => request('POST', '/api/contact', payload),
 }

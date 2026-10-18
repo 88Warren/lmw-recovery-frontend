@@ -5,6 +5,7 @@ import AdminSlots    from './AdminSlots'
 import AdminBookings from './AdminBookings'
 import AdminContacts from './AdminContacts'
 import AdminCalendar from './AdminCalendar'
+import AdminScreening from './AdminScreening'
 
 const NAV = [
   { id: 'diary',    label: 'Diary',
@@ -15,6 +16,8 @@ const NAV = [
     icon: <><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></> },
   { id: 'contacts', label: 'Enquiries',
     icon: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></> },
+  { id: 'screening', label: 'Screening',
+    icon: <><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></> },
 ]
 
 export default function Admin() {
@@ -103,6 +106,7 @@ export default function Admin() {
           {tab === 'slots'    && <AdminSlots />}
           {tab === 'bookings' && <AdminBookings />}
           {tab === 'contacts' && <AdminContacts />}
+          {tab === 'screening' && <AdminScreening />}
         </main>
       </div>
     </div>
