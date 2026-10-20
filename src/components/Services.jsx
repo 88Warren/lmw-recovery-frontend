@@ -67,7 +67,7 @@ const SERVICES = [
 export default function Services() {
   return (
     <section id="services" style={{ backgroundColor: '#171717', padding: '7rem 0 6rem' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2.5rem' }}>
+      <div className="section-pad" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2.5rem' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
@@ -96,7 +96,7 @@ export default function Services() {
 
         {/* CTA */}
         <div style={{ textAlign: 'center', marginTop: '3.5rem' }}>
-          <a href="#pricing" style={{
+          <a href="#treatments" className="cta-button" style={{
             display: 'inline-block',
             fontFamily: 'Montserrat, sans-serif',
             fontSize: '0.55rem', fontWeight: 600,
@@ -135,7 +135,7 @@ function ServiceCard({ title, desc, icon }) {
         display: 'block', width: '1.5rem', height: '1px',
         backgroundColor: '#C9A15B', marginBottom: '1.25rem',
       }} />
-      <h3 style={{
+      <h3 className="mobile-legible" style={{
         fontFamily: 'Montserrat, sans-serif',
         fontSize: '0.55rem', fontWeight: 700,
         letterSpacing: '0.22em', textTransform: 'uppercase',

@@ -61,7 +61,7 @@ export default function Studio() {
           maxWidth: '40ch', marginBottom: '2.5rem',
         }}>
           A converted garden studio at the house, warm lighting, no rush, no
-          waiting room. Just you, the table, and time to properly recover.
+          waiting room. Just you, the table, and time to recover properly.
         </p>
 
         {/* Details table */}

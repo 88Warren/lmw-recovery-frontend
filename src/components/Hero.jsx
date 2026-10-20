@@ -31,7 +31,7 @@ export default function Hero({ onBookClick }) {
       }} aria-hidden="true" />
 
       {/* Main content */}
-      <div style={{
+      <div className="section-pad" style={{
         position: 'relative', zIndex: 10,
         flex: 1,
         maxWidth: '1280px', margin: '0 auto',
@@ -71,7 +71,7 @@ export default function Hero({ onBookClick }) {
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="#contact" style={{
+            <a href="#contact" className="cta-button" style={{
               display: 'inline-block',
               fontFamily: 'Montserrat, sans-serif',
               fontSize: '0.58rem', fontWeight: 600,
@@ -86,7 +86,7 @@ export default function Hero({ onBookClick }) {
             onMouseLeave={e => e.currentTarget.style.backgroundColor = '#C9A15B'}
             >Book a Session</a>
 
-            <a href="#treatments" style={{
+            <a href="#treatments" className="cta-button" style={{
               display: 'inline-block',
               fontFamily: 'Montserrat, sans-serif',
               fontSize: '0.58rem', fontWeight: 600,

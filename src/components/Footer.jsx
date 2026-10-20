@@ -3,7 +3,7 @@ export default function Footer() {
     <footer id="contact" style={{ backgroundColor: '#0a0a0a' }}>
 
       {/* ── Main grid ── */}
-      <div style={{
+      <div className="section-pad" style={{
         maxWidth: '1280px', margin: '0 auto',
         padding: '5rem 2.5rem 4rem',
         display: 'grid',
@@ -20,7 +20,7 @@ export default function Footer() {
               fontSize: '2rem', fontWeight: 600,
               color: '#C9A15B', letterSpacing: '0.12em',
             }}>LMW</div>
-            <div style={{
+            <div className="wordmark-sub" style={{
               fontFamily: 'Montserrat, sans-serif',
               fontSize: '0.42rem', fontWeight: 600,
               letterSpacing: '0.87em', color: '#F4F0EB', marginTop: '2px',
@@ -62,13 +62,13 @@ export default function Footer() {
       </div>
 
       {/* ── Bottom bar ── */}
-      <div style={{
+      <div className="section-pad" style={{
         maxWidth: '1280px', margin: '0 auto',
         padding: '1.25rem 2.5rem',
         display: 'flex', flexWrap: 'wrap',
         alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem',
       }}>
-        <p style={{
+        <p className="mobile-legible" style={{
           fontFamily: 'Montserrat, sans-serif', fontSize: '0.6rem',
           fontWeight: 300, color: '#78736C', letterSpacing: '0.04em',
         }}>
@@ -98,10 +98,10 @@ function ColHead({ children }) {
 
 function FooterLink({ href, children }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" style={{
+    <a href={href} target="_blank" rel="noopener noreferrer" className="mobile-legible" style={{
       fontFamily: 'Montserrat, sans-serif', fontSize: '0.65rem',
       fontWeight: 300, color: '#78736C', textDecoration: 'none',
-      transition: 'color 0.2s',
+      transition: 'color 0.2s', display: 'inline-block', padding: '0.4rem 0',
     }}
     onMouseEnter={e => e.currentTarget.style.color = '#C9A15B'}
     onMouseLeave={e => e.currentTarget.style.color = '#78736C'}

@@ -39,7 +39,7 @@ export default function ContactSection() {
 
   return (
     <section id="contact" style={{ backgroundColor: '#0f0f0f', padding: '7rem 0' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2.5rem' }}>
+      <div className="section-pad" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2.5rem' }}>
 
         <div style={{
           display: 'grid',
@@ -184,6 +184,21 @@ export default function ContactSection() {
                 >
                   {submitting ? 'Sending…' : 'Send Message'}
                 </button>
+
+                {/* Privacy notice at point of collection (UK GDPR transparency) */}
+                <p style={{
+                  fontFamily: 'Montserrat, sans-serif', fontSize: '0.62rem',
+                  fontWeight: 300, color: '#78736C', lineHeight: 1.7, margin: 0,
+                }}>
+                  We use the details you provide only to respond to your enquiry.
+                  See our{' '}
+                  <a
+                    href="/docs/LMW_Recovery_Privacy_Policy.html"
+                    target="_blank" rel="noopener noreferrer"
+                    style={{ color: '#C9A15B', textDecoration: 'none' }}
+                  >Privacy Policy</a>{' '}
+                  for how we handle your data.
+                </p>
               </form>
             ) : (
               <div style={{ textAlign: 'center', padding: '3rem 0' }}>

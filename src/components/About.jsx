@@ -44,7 +44,7 @@ export default function About() {
           Llantrisant. Quiet, comfortable, and entirely yours.
         </p>
 
-        <a href="#contact" style={{
+        <a href="#contact" className="cta-button" style={{
           alignSelf: 'flex-start',
           fontFamily: 'Montserrat, sans-serif',
           fontSize: '0.55rem', fontWeight: 600,

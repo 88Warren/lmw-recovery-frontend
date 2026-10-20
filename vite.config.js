@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 // Dev-server routing to mirror production nginx:
 //   /admin, /admin/            → /admin.html (the admin MPA entry)
@@ -32,11 +34,36 @@ function devRouteFallback() {
   }
 }
 
+// Stamp the sitemap's <lastmod> with the build date so it always reflects the
+// latest deploy. Runs on build only (not dev) and patches the emitted
+// dist/sitemap.xml after the static assets are copied.
+function stampSitemapLastmod() {
+  return {
+    name: 'stamp-sitemap-lastmod',
+    apply: 'build',
+    closeBundle() {
+      const out = resolve(import.meta.dirname, 'dist/sitemap.xml')
+      if (!existsSync(out)) return
+      const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+      let xml = readFileSync(out, 'utf8')
+      if (/<lastmod>.*?<\/lastmod>/.test(xml)) {
+        xml = xml.replace(/<lastmod>.*?<\/lastmod>/g, `<lastmod>${today}</lastmod>`)
+      } else {
+        // No lastmod present — insert one after each <loc>.
+        xml = xml.replace(/(<\/loc>)/g, `$1\n    <lastmod>${today}</lastmod>`)
+      }
+      writeFileSync(out, xml)
+      this.warn(`sitemap.xml lastmod stamped: ${today}`)
+    },
+  }
+}
+
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
     devRouteFallback(),
+    stampSitemapLastmod(),
   ],
 
   // MPA mode tells Vite there are multiple HTML entry points.

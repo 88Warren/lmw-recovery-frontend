@@ -44,7 +44,7 @@ export default function Navbar({ onBookClick }) {
       backdropFilter: scrolled ? 'blur(12px)' : 'none',
       transition: 'background-color 0.4s, border-color 0.4s',
     }}>
-      <div style={{
+      <div className="section-pad" style={{
         maxWidth: '1280px', margin: '0 auto',
         padding: '0 2.5rem', height: '5rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -53,7 +53,7 @@ export default function Navbar({ onBookClick }) {
         {/* Logo */}
         <a href="#home" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
           <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '2rem', fontWeight: 600, color: '#C9A15B', letterSpacing: '0.12em' }}>LMW</span>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '0.42rem', fontWeight: 600, letterSpacing: '0.87em', color: '#F4F0EB', marginTop: '2px', display: 'block' }}>RECOVERY</span>
+          <span className="wordmark-sub" style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '0.42rem', fontWeight: 600, letterSpacing: '0.87em', color: '#F4F0EB', marginTop: '2px', display: 'block' }}>RECOVERY</span>
         </a>
 
         {/* Desktop nav */}
@@ -91,7 +91,7 @@ export default function Navbar({ onBookClick }) {
           <button
             onClick={() => setMenuOpen(o => !o)}
             aria-label="Menu" aria-expanded={menuOpen}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: isDesktop ? 'none' : 'flex', flexDirection: 'column', gap: '5px' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', width: '44px', height: '44px', display: isDesktop ? 'none' : 'flex', flexDirection: 'column', gap: '5px', alignItems: 'center', justifyContent: 'center' }}
           >
             {[0,1,2].map(i => (
               <span key={i} style={{
@@ -117,12 +117,13 @@ export default function Navbar({ onBookClick }) {
         backgroundColor: '#171717',
         borderTop: menuOpen ? '1px solid rgba(201,161,91,0.15)' : 'none',
       }}>
-        <nav style={{ display: 'flex', flexDirection: 'column', padding: '1.5rem 2.5rem 2rem', gap: '1.25rem' }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', padding: '0.5rem 2.5rem 1.5rem', gap: '0.25rem' }}>
           {NAV.map(({ label, href }) => (
-            <a key={label} href={href} onClick={() => setMenuOpen(false)} style={{
-              fontFamily: 'Montserrat, sans-serif', fontSize: '0.65rem',
+            <a key={label} href={href} onClick={() => setMenuOpen(false)} className="nav-mobile-link" style={{
+              fontFamily: 'Montserrat, sans-serif', fontSize: '0.8rem',
               fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase',
               color: '#F4F0EB', textDecoration: 'none',
+              padding: '0.85rem 0', display: 'block',
             }}>{label}</a>
           ))}
           <a href="#contact" onClick={() => { setMenuOpen(false); onBookClick() }} style={{

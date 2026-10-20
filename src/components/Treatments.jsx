@@ -28,7 +28,7 @@ export default function Treatments({ onBookClick }) {
   return (
     // #1c1c1c contrasts against Studio (#0f0f0f) above and CTABanner (#0f0f0f) below
     <section id="treatments" style={{ backgroundColor: '#1c1c1c', padding: '7rem 0 6rem' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2.5rem' }}>
+      <div className="section-pad" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2.5rem' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>

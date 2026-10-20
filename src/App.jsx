@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { initConsent } from './cookies'
+import { initConsent, trackPageView } from './cookies'
 import BookingReturn   from './components/BookingReturn'
 import MemberAccess    from './components/MemberAccess'
 import ManageBooking   from './components/ManageBooking'
@@ -8,9 +8,12 @@ import Navbar          from './components/Navbar'
 import Hero           from './components/Hero'
 import Marquee        from './components/Marquee'
 import About          from './components/About'
+import Services        from './components/Services'
 import BrandValues    from './components/BrandValues'
 import Studio         from './components/Studio'
+import Location       from './components/Location'
 import Treatments     from './components/Treatments'
+import FAQ            from './components/FAQ'
 import ContactSection from './components/ContactSection'
 import BookingModal   from './components/BookingModal'
 import Footer         from './components/Footer'
@@ -30,8 +33,12 @@ export default function App() {
     setPreselected(null)
   }, [])
 
-  // Re-apply a previously granted analytics consent on load.
-  useEffect(() => { initConsent() }, [])
+  // Load analytics (Consent Mode defaults) and re-apply prior consent on load,
+  // then report the initial page view for the current route.
+  useEffect(() => {
+    initConsent()
+    trackPageView()
+  }, [])
 
   // Stripe Checkout return pages. The app has no router, so branch on the path.
   const path = typeof window !== 'undefined' ? window.location.pathname : '/'
@@ -49,9 +56,12 @@ export default function App() {
         <Hero onBookClick={() => openModal()} />
         <Marquee />
         <About />
+        <Services />
         <BrandValues />
         <Studio />
+        <Location />
         <Treatments onBookClick={openModal} />
+        <FAQ />
         <ContactSection />
       </main>
 

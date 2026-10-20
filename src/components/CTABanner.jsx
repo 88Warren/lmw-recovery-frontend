@@ -1,6 +1,6 @@
 export default function CTABanner({ onBookClick }) {
   return (
-    <section style={{
+    <section className="section-pad" style={{
       backgroundColor: '#0f0f0f',
       padding: '7rem 2.5rem',
       textAlign: 'center',
@@ -26,6 +26,7 @@ export default function CTABanner({ onBookClick }) {
 
         <button
           onClick={onBookClick}
+          className="cta-button"
           style={{
             display: 'inline-block',
             fontFamily: 'Montserrat, sans-serif',

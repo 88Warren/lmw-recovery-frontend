@@ -989,6 +989,17 @@ export default function BookingModal({ open, onClose, preselected, memberContext
                 : "You'll be taken to our secure payment page to pay and confirm your booking. A confirmation email and health questionnaire follow once payment is complete."}
             </p>
 
+            {/* Privacy notice at point of collection (UK GDPR transparency) */}
+            <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.58rem', fontWeight:300, color:'#78736C', lineHeight:1.7 }}>
+              We use your details to manage your booking, and process payment
+              securely via Stripe. See our{' '}
+              <a
+                href="/docs/LMW_Recovery_Privacy_Policy.html"
+                target="_blank" rel="noopener noreferrer"
+                style={{ color:'#C9A15B', textDecoration:'none' }}
+              >Privacy Policy</a>.
+            </p>
+
             {submitError && <p style={{ fontFamily:'Montserrat,sans-serif', fontSize:'0.7rem', color:'#e07070', padding:'0.75rem 1rem', backgroundColor:'rgba(224,112,112,0.08)', border:'1px solid rgba(224,112,112,0.2)' }}>{submitError}</p>}
 
             <div style={{ display:'flex', gap:'0.75rem' }}>

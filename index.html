@@ -2,18 +2,23 @@
 <html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- ─── Favicons / app icons ────────────────────────────────────── -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0a0a0a" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- ─── Primary SEO ─────────────────────────────────────────────── -->
     <title>Sports Massage in Llantrisant, RCT | LMW Recovery</title>
     <meta
       name="description"
-      content="Professional sports &amp; remedial massage in Llantrisant, Rhondda Cynon Taf. Deep tissue, recovery and maintenance therapy to help you move better, recover faster and perform stronger. Book your session with LMW Recovery."
-    />
-    <meta
-      name="keywords"
-      content="sports massage Llantrisant, sports massage RCT, remedial massage Rhondda Cynon Taf, deep tissue massage South Wales, sports therapist Llantrisant, recovery massage, sports massage near me, Pontyclun, Talbot Green"
+      content="Professional sports &amp; remedial massage in Llantrisant, Rhondda Cynon Taf. Deep tissue and recovery therapy for athletes and active people. Book today."
     />
     <meta name="author" content="LMW Recovery" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -134,6 +139,66 @@
             "@type": "Service",
             "name": "Maintenance Plan",
             "description": "Fortnightly sessions for clients in an active training or bulk phase. Two sessions per month."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- ─── Structured data: FAQ (mirrors the on-page FAQ section) ───── -->
+    <!-- Keep in sync with src/components/FAQ.jsx — Google requires FAQPage
+         markup to match the visible questions and answers. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What should I expect from my first sports massage?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your first session starts with a short chat about your training, any niggles or injuries, and what you want from the treatment. You complete a brief health questionnaire beforehand so the work is safe and tailored to you. Whether you book a full sports massage or a shorter recovery express session, the work focuses on the areas that need it, and you stay in control of the pressure throughout."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does deep tissue massage hurt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Deep tissue massage can feel intense in tight or overworked muscles, but it should never be unbearable. Good sports massage therapy works with your body, not against it. I check in on pressure as we go and adjust to what feels productive for you rather than painful."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often should I book a session?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It depends on your training load. Many active clients book fortnightly for athlete recovery treatment that keeps tension in check, which is what the maintenance massage plan is built for. If you are working through a specific issue, weekly sessions for a short block can help; for general upkeep, monthly is plenty."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should I wear?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Wear or bring comfortable, loose clothing such as shorts and a vest. You only need to expose the areas being treated, and you will always be draped with towels so you stay comfortable and covered throughout."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where is the studio and is there parking?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The studio is a private, purpose-built space in Llantrisant, Rhondda Cynon Taf, with its own entrance separate from the house. There is free on-site parking, so you can arrive, park, and head straight in."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I book and pay?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can book online in a few taps using the \"Book a Session\" button. Choose your treatment and time, and pay securely via Stripe. You will get a confirmation email and a short health questionnaire to complete before your appointment."
           }
         }
       ]

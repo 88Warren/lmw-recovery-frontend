@@ -91,6 +91,13 @@
     .contact-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
   }
 
+  /* Location — address + map stack on tablet/mobile; give the map a fixed
+     height once it's full-width so it stays usable. */
+  @media (max-width: 768px) {
+    .location-grid { grid-template-columns: 1fr !important; }
+    .location-grid > *:last-child { min-height: 300px !important; }
+  }
+
   /* Brand values — hide the decorative 4-up strip on mobile; otherwise
      step down the column count on tablet and phone */
   @media (max-width: 768px) {
@@ -123,6 +130,32 @@
   @media (max-width: 640px) {
     .testimonial-grid { grid-template-columns: 1fr !important; }
     .testimonial-grid > *:not(:nth-child(1)) { display: none; }
+  }
+
+  /* ── Mobile legibility & spacing (≤768px) ───────────────────────────
+     The desktop design uses very small spaced-caps type (0.42–0.72rem) and
+     tight 2.5rem side padding. On phones that fails Lighthouse's "legible
+     font sizes" and "tap targets" checks and wastes width. These rules lift
+     the smallest text to a readable floor and reclaim horizontal space,
+     without touching the desktop layout. `!important` is required to win
+     against inline style attributes. */
+  @media (max-width: 768px) {
+    /* Reclaim side padding: 2.5rem (40px) → 1.25rem (20px) per side. */
+    .section-pad { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+    /* Section eyebrow label — bump from 0.6rem. */
+    .eyebrow { font-size: 0.68rem !important; }
+
+    /* Legible floor for small spaced-caps labels and body copy. */
+    .mobile-legible { font-size: 0.75rem !important; }
+
+    /* The tiny "RECOVERY" wordmark under the LMW logo (0.42rem). Keep it
+       smaller than body text but lift it off the 6.7px floor, and relax the
+       extreme letter-spacing so it doesn't overflow at the larger size. */
+    .wordmark-sub { font-size: 0.55rem !important; letter-spacing: 0.55em !important; }
+
+    /* CTA buttons: guarantee a ≥44px tap height on phones. */
+    .cta-button { padding-top: 0.95rem !important; padding-bottom: 0.95rem !important; }
   }
 
   /* Booking modal — tighten the slot picker on phone */
