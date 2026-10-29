@@ -29,9 +29,10 @@ async function request(method, path, body) {
 
 export const adminApi = {
   // Slots
-  listSlots:    ()         => request('GET',    '/api/admin/slots'),
-  createSlots:  (payload)  => request('POST',   '/api/admin/slots', payload),
-  deleteSlot:   (id)       => request('DELETE', `/api/admin/slots/${id}`),
+  listSlots:    ()             => request('GET',    '/api/admin/slots'),
+  createSlots:  (payload)      => request('POST',   '/api/admin/slots', payload),
+  deleteSlot:   (id)           => request('DELETE', `/api/admin/slots/${id}`),
+  setSlotBlock: (id, blocked)  => request('PATCH',  `/api/admin/slots/${id}/block`, { blocked }),
 
   // Bookings
   listBookings:   ()   => request('GET',   '/api/admin/bookings'),

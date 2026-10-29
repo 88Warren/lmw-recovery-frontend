@@ -85,6 +85,15 @@ export default function AdminSlots() {
     catch (e) { alert(e.message) }
   }
 
+  async function handleBlock(id, blocked) {
+    // blocked === true  -> mark as busy (grey out for clients)
+    // blocked === false -> free it up again
+    try {
+      await adminApi.setSlotBlock(id, blocked)
+      setSlots(s => s.map(x => x.id === id ? { ...x, blocked } : x))
+    } catch (e) { alert(e.message) }
+  }
+
   return (
     <div>
       <h2 style={styles.pageTitle}>Availability</h2>
@@ -140,17 +149,27 @@ export default function AdminSlots() {
             </tr></thead>
             <tbody>
               {upcoming.map(s => (
-                <tr key={s.id} style={{ borderBottom:'1px solid rgba(201,161,91,0.08)' }}>
+                <tr key={s.id} style={{ borderBottom:'1px solid rgba(201,161,91,0.08)', opacity: s.blocked ? 0.55 : 1 }}>
                   <td style={styles.td}>{fmtSlot(s)}</td>
-                  <td style={styles.td}><StatusBadge booking={s.booking} /></td>
+                  <td style={styles.td}><StatusBadge booking={s.booking} blocked={s.blocked} /></td>
                   <td style={styles.td}>
                     {s.booking
                       ? <span>{s.booking.client_name}<br/><span style={{ color:'#78736C', fontSize:'0.62rem' }}>{s.booking.treatment} ({s.booking.duration_minutes} min)</span></span>
-                      : <span style={{ color:'#78736C' }}>—</span>
+                      : s.blocked
+                        ? <span style={{ color:'#78736C', fontSize:'0.62rem' }}>Marked busy</span>
+                        : <span style={{ color:'#78736C' }}>—</span>
                     }
                   </td>
-                  <td style={{ ...styles.td, textAlign:'right' }}>
-                    {!s.booking && <DangerBtn onClick={() => handleDelete(s.id)}>Delete</DangerBtn>}
+                  <td style={{ ...styles.td, textAlign:'right', whiteSpace:'nowrap' }}>
+                    {!s.booking && (
+                      s.blocked
+                        ? <GhostBtn onClick={() => handleBlock(s.id, false)}>Free up</GhostBtn>
+                        : <>
+                            <GhostBtn onClick={() => handleBlock(s.id, true)}>Block</GhostBtn>
+                            <span style={{ display:'inline-block', width:'0.5rem' }} />
+                            <DangerBtn onClick={() => handleDelete(s.id)}>Delete</DangerBtn>
+                          </>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -170,8 +189,8 @@ export default function AdminSlots() {
               {past.map(s => (
                 <tr key={s.id} style={{ borderBottom:'1px solid rgba(201,161,91,0.06)', opacity:0.6 }}>
                   <td style={styles.td}>{fmtSlot(s)}</td>
-                  <td style={styles.td}><StatusBadge booking={s.booking} /></td>
-                  <td style={styles.td}>{s.booking ? s.booking.client_name : '—'}</td>
+                  <td style={styles.td}><StatusBadge booking={s.booking} blocked={s.blocked} /></td>
+                  <td style={styles.td}>{s.booking ? s.booking.client_name : (s.blocked ? 'Marked busy' : '—')}</td>
                 </tr>
               ))}
             </tbody>
@@ -182,8 +201,9 @@ export default function AdminSlots() {
   )
 }
 
-function StatusBadge({ booking }) {
+function StatusBadge({ booking, blocked }) {
   if (booking) return <Badge color="#C9A15B" bg="rgba(201,161,91,0.12)">Booked</Badge>
+  if (blocked) return <Badge color="#9a9a9a" bg="rgba(154,154,154,0.12)">Blocked</Badge>
   return <Badge color="#6fcf97" bg="rgba(111,207,151,0.1)">Available</Badge>
 }
 
@@ -242,6 +262,23 @@ function DangerBtn({ children, onClick }) {
         letterSpacing:'0.15em', textTransform:'uppercase',
         backgroundColor:'transparent', color: hov ? '#e07070' : '#78736C',
         border:`1px solid ${hov ? '#e07070' : 'rgba(120,115,108,0.3)'}`,
+        padding:'0.3rem 0.65rem', cursor:'pointer', transition:'all 0.2s',
+      }}>{children}</button>
+  )
+}
+
+// GhostBtn — neutral action button used for Block / Free up. Hover picks up the
+// studio gold so it reads as a safe, reversible action (unlike DangerBtn).
+function GhostBtn({ children, onClick }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <button onClick={onClick}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        fontFamily:'Montserrat,sans-serif', fontSize:'0.48rem', fontWeight:600,
+        letterSpacing:'0.15em', textTransform:'uppercase',
+        backgroundColor:'transparent', color: hov ? '#C9A15B' : '#78736C',
+        border:`1px solid ${hov ? '#C9A15B' : 'rgba(120,115,108,0.3)'}`,
         padding:'0.3rem 0.65rem', cursor:'pointer', transition:'all 0.2s',
       }}>{children}</button>
   )
