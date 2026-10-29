@@ -994,7 +994,7 @@ export default function BookingModal({ open, onClose, preselected, memberContext
               We use your details to manage your booking, and process payment
               securely via Stripe. See our{' '}
               <a
-                href="/docs/LMW_Recovery_Privacy_Policy.html"
+                href="/privacy"
                 target="_blank" rel="noopener noreferrer"
                 style={{ color:'#C9A15B', textDecoration:'none' }}
               >Privacy Policy</a>.

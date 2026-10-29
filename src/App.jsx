@@ -1,9 +1,12 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react'
 import { initConsent, trackPageView } from './cookies'
-import BookingReturn   from './components/BookingReturn'
-import MemberAccess    from './components/MemberAccess'
-import ManageBooking   from './components/ManageBooking'
-import ScreeningForm   from './components/ScreeningForm'
+// Booking-flow screens render only on /booking/* routes, never on the home
+// page. Lazy-load them so their code is split into separate chunks and kept
+// out of the initial homepage bundle.
+const BookingReturn = lazy(() => import('./components/BookingReturn'))
+const MemberAccess  = lazy(() => import('./components/MemberAccess'))
+const ManageBooking = lazy(() => import('./components/ManageBooking'))
+const ScreeningForm = lazy(() => import('./components/ScreeningForm'))
 import Navbar          from './components/Navbar'
 import Hero           from './components/Hero'
 import Marquee        from './components/Marquee'
@@ -41,12 +44,19 @@ export default function App() {
   }, [])
 
   // Stripe Checkout return pages. The app has no router, so branch on the path.
+  // Each lazy screen is wrapped in Suspense (fallback is minimal — these load
+  // fast and are reached only via a redirect, not the main browsing flow).
   const path = typeof window !== 'undefined' ? window.location.pathname : '/'
-  if (path.startsWith('/booking/success')) return <BookingReturn />
-  if (path.startsWith('/booking/cancelled')) return <BookingReturn cancelled />
-  if (path.startsWith('/booking/member')) return <MemberAccess />
-  if (path.startsWith('/booking/manage')) return <ManageBooking />
-  if (path.startsWith('/booking/screening')) return <ScreeningForm />
+  const bookingScreen =
+    path.startsWith('/booking/success')   ? <BookingReturn /> :
+    path.startsWith('/booking/cancelled') ? <BookingReturn cancelled /> :
+    path.startsWith('/booking/member')    ? <MemberAccess /> :
+    path.startsWith('/booking/manage')    ? <ManageBooking /> :
+    path.startsWith('/booking/screening') ? <ScreeningForm /> :
+    null
+  if (bookingScreen) {
+    return <Suspense fallback={null}>{bookingScreen}</Suspense>
+  }
 
   return (
     <>

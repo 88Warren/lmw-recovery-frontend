@@ -36,7 +36,7 @@ export default function CookieBanner() {
         We use essential cookies to make this site work, and analytics cookies
         (only if you accept) to understand how it's used.{' '}
         <a
-          href="/docs/LMW_Recovery_Privacy_Policy.html"
+          href="/privacy"
           target="_blank" rel="noopener noreferrer"
           style={{ color: '#C9A15B', textDecoration: 'none' }}
         >Cookie Policy</a>.

@@ -16,8 +16,17 @@ function devRouteFallback() {
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
         const path = (req.url || '').split('?')[0]
+        // Clean URLs for the policy docs — mirror the production nginx aliases
+        // so /privacy, /terms, /risk-assessment resolve in `npm run dev` too.
+        const DOC_ALIASES = {
+          '/privacy': '/docs/LMW_Recovery_Privacy_Policy.html',
+          '/terms': '/docs/LMW_Recovery_Terms_of_Service.html',
+          '/risk-assessment': '/docs/LMW_Recovery_Studio_Risk_Assessment.html',
+        }
         if (path === '/admin' || path === '/admin/') {
           req.url = '/admin.html'
+        } else if (DOC_ALIASES[path]) {
+          req.url = DOC_ALIASES[path]
         } else if (
           path === '/booking/success' || path === '/booking/cancelled' ||
           path === '/booking/member' || path === '/booking/manage' ||

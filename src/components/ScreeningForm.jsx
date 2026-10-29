@@ -26,8 +26,8 @@ const linkToken = typeof window !== 'undefined'
   ? new URLSearchParams(window.location.search).get('token')
   : null
 
-const PRIVACY_URL = '/docs/LMW_Recovery_Privacy_Policy.html'
-const TERMS_URL   = '/docs/LMW_Recovery_Terms_of_Service.html'
+const PRIVACY_URL = '/privacy'
+const TERMS_URL   = '/terms'
 
 // Yes/No medical questions, grouped as on the paper form.
 const GENERAL_HEALTH = [

@@ -1,4 +1,7 @@
+import { useEmail } from '../useEmail'
+
 export default function Footer() {
+  const email = useEmail()
   return (
     <footer id="contact" style={{ backgroundColor: '#0a0a0a' }}>
 
@@ -53,7 +56,7 @@ export default function Footer() {
         <div>
           <ColHead>Contact</ColHead>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            <ContactRow icon="email" href="mailto:info@lmwrecovery.co.uk">info@lmwrecovery.co.uk</ContactRow>
+            <ContactRow icon="email" href={email.href}>{email.label}</ContactRow>
             <ContactRow icon="phone" href="tel:07516606668">07516 606668</ContactRow>
             <ContactRow icon="web"   href="https://lmwrecovery.co.uk">lmwrecovery.co.uk</ContactRow>
           </ul>
@@ -75,9 +78,9 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} LMW Recovery &nbsp;·&nbsp; Move. Recover. Perform.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
-          <FooterLink href="/docs/LMW_Recovery_Privacy_Policy.html">Privacy Policy</FooterLink>
-          <FooterLink href="/docs/LMW_Recovery_Terms_of_Service.html">Terms &amp; Conditions</FooterLink>
-          <FooterLink href="/docs/LMW_Recovery_Studio_Risk_Assessment.html">Risk Assessment</FooterLink>
+          <FooterLink href="/privacy">Privacy Policy</FooterLink>
+          <FooterLink href="/terms">Terms &amp; Conditions</FooterLink>
+          <FooterLink href="/risk-assessment">Risk Assessment</FooterLink>
         </div>
       </div>
     </footer>

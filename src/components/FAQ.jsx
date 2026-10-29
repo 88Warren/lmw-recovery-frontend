@@ -31,6 +31,18 @@ const FAQS = [
     q: 'How do I book and pay?',
     a: 'You can book online in a few taps using the "Book a Session" button. Choose your treatment and time, and pay securely via Stripe. You will get a confirmation email and a short health questionnaire to complete before your appointment.',
   },
+  {
+    q: 'Who is sports massage for?',
+    a: 'It is not just for competitive athletes. Runners, lifters, cyclists, team-sport players and anyone who trains regularly all benefit, as do people whose work or daily routine leaves them stiff and tight. If you move a lot and want to keep doing it comfortably, sports massage in Llantrisant is worth building into your routine.',
+  },
+  {
+    q: 'How should I look after myself after a session?',
+    a: 'Drink plenty of water, keep moving gently, and avoid a heavy training session for the first 24 hours so the muscles can settle. It is normal to feel a little tender the next day, much like after a good workout. That eases quickly, and most people feel looser and more mobile within a day or two.',
+  },
+  {
+    q: 'Can sports massage help with a specific injury or pain?',
+    a: 'Sports and deep tissue massage can ease muscular tightness, improve mobility and support recovery around many common training niggles. It is not a substitute for medical diagnosis, though. If you have a new or serious injury, see a GP or physiotherapist first, and I am happy to work alongside their advice once you are cleared.',
+  },
 ]
 
 function FAQItem({ item, open, onToggle, id }) {
